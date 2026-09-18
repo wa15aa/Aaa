@@ -1,0 +1,59 @@
+# Fastfile — Steady iOS 上传链路
+# 依赖：fastlane + xcodegen（CI 里自动装）；签名用 match（git 仓库存证书）
+# 认证：App Store Connect API Key（环境变量 ASC_KEY_ID / ASC_ISSUER_ID / ASC_KEY_BASE64）
+# 文档：docs/FASTLANE.md
+
+default_platform(:ios)
+
+def asc_api_key
+  app_store_connect_api_key(
+    key_id: ENV["ASC_KEY_ID"],
+    issuer_id: ENV["ASC_ISSUER_ID"],
+    key_content: Base64.decode64(ENV["ASC_KEY_BASE64"] || ""),
+    is_key_content_base64: false,
+    in_house: false
+  )
+end
+
+platform :ios do
+  desc "归档并上传 TestFlight（CI deploy job 调用）"
+  lane :beta do
+    # 签名：match readonly 拉证书/描述文件（需要 MATCH_GIT_URL + MATCH_PASSWORD）
+    match(
+      type: "appstore",
+      readonly: true,
+      api_key: asc_api_key
+    )
+
+    # 生成工程（工程文件由 xcodegen 管理，不提交 .xcodeproj 时也安全）
+    sh("xcodegen generate")
+
+    gym(
+      scheme: "Steady",
+      project: "Steady.xcodeproj",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "build",
+      output_name: "Steady.ipa"
+    )
+
+    upload_to_testflight(
+      api_key: asc_api_key,
+      skip_waiting_for_build_processing: true,
+      distribute_external: false
+    )
+  end
+
+  desc "仅本地验证归档（不需要 ASC key，需要本机签名证书）"
+  lane :archive_only do
+    sh("xcodegen generate")
+    gym(
+      scheme: "Steady",
+      project: "Steady.xcodeproj",
+      export_method: "app-store",
+      clean: true,
+      output_directory: "build",
+      output_name: "Steady.ipa"
+    )
+  end
+end

@@ -83,6 +83,32 @@ struct HabitDetailView: View {
     private var state: StreakState { repo.streakState(for: habit) }
     private var checkinSet: Set<DayKey> { Set(repo.allCheckins(habitId: habit.id).map { DayKey($0.day) }) }
 
+    /// 完成率（MVP_SPEC §3.7）：daily = 打卡天数/创建以来天数；weekly = 达标周数/创建以来周数
+    private var completionRate: Int {
+        let created = DayKey(habit.createdDay)
+        let today = DayKey(HabitRepository.todayKey())
+        // 统一用引擎的整数日期算法算天数
+        func daysBetween(_ a: DayKey, _ b: DayKey) -> Int {
+            var n = 0, d = a
+            while d < b { d = StreakEngine.addDays(d, 1); n += 1 }
+            return n
+        }
+        if habit.frequencyKind == "weekly" {
+            let totalWeeks = max(1, daysBetween(StreakEngine.weekStart(created), StreakEngine.weekStart(today)) / 7 + 1)
+            var met = 0
+            var w = StreakEngine.weekStart(created)
+            while w <= today {
+                let weekDays = (0..<7).map { StreakEngine.addDays(w, $0) }
+                if weekDays.filter({ checkinSet.contains($0) }).count >= Int(habit.timesPerWeek) { met += 1 }
+                w = StreakEngine.addDays(w, 7)
+            }
+            return met * 100 / totalWeeks
+        }
+        let totalDays = max(1, daysBetween(created, today) + 1)
+        let done = checkinSet.filter { $0 >= created && $0 <= today }.count
+        return done * 100 / totalDays
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -93,6 +119,7 @@ struct HabitDetailView: View {
                 stat("当前", "\(state.current)")
                 stat("最佳", "\(state.best)")
                 stat("历史段", "\(state.segments.count)")
+                stat("完成率", "\(completionRate)%")
             }
             HeatmapView(habit: habit,
                         checkins: checkinSet,

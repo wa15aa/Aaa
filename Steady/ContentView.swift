@@ -77,13 +77,20 @@ struct AddHabitView: View {
     @State private var hasReminder = false
     @State private var reminderTime = Calendar.current.date(from: DateComponents(hour: 9, minute: 0)) ?? Date()
     @State private var showPaywall = false
+    @State private var icon = "star.fill"
+    @State private var colorHex = "4F8CFF"
 
-    private let icons = ["star.fill", "heart.fill", "flame.fill", "book.fill", "figure.run", "drop.fill"]
+    // MVP_SPEC §4：icon enum 32 个的可用子集（SF Symbols，v1 先 24 个常用）
+    private let icons = ["star.fill", "heart.fill", "flame.fill", "book.fill", "figure.run", "drop.fill",
+                         "leaf.fill", "moon.fill", "sun.max.fill", "pencil", "paintbrush.fill", "music.note",
+                         "dumbbell.fill", "bicycle", "fork.knife", "cup.and.saucer.fill", "bed.double.fill", "brain.head.profile",
+                         "text.book.closed.fill", "laptopcomputer", "camera.fill", "gamecontroller.fill", "cart.fill", "phone.fill"]
+    private let colors = ["4F8CFF", "FF6B6B", "34C759", "FF9500", "AF52DE", "00C7BE", "FFD60A", "FF375F"]
 
     private func save() {
         let repo = HabitRepository(context: context)
         let habit = repo.createHabit(
-            name: name, icon: icons[0], colorHex: "4F8CFF",
+            name: name, icon: icon, colorHex: colorHex,
             frequency: isWeekly ? .timesPerWeek(timesPerWeek) : .daily)
         if hasReminder {
             NotificationManager.requestAuthorization()
@@ -98,6 +105,29 @@ struct AddHabitView: View {
         NavigationView {
             Form {
                 TextField("习惯名字", text: $name)
+                Section("图标") {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
+                        ForEach(icons, id: \.self) { name in
+                            Image(systemName: name)
+                                .font(.title3)
+                                .frame(width: 40, height: 40)
+                                .background(icon == name ? Color(hex: colorHex).opacity(0.25) : Color.clear)
+                                .cornerRadius(8)
+                                .onTapGesture { icon = name }
+                        }
+                    }
+                }
+                Section("颜色") {
+                    HStack(spacing: 12) {
+                        ForEach(colors, id: \.self) { hex in
+                            Circle()
+                                .fill(Color(hex: hex))
+                                .frame(width: 28, height: 28)
+                                .overlay(Circle().stroke(Color.primary, lineWidth: colorHex == hex ? 2 : 0))
+                                .onTapGesture { colorHex = hex }
+                        }
+                    }
+                }
                 Toggle("每周 N 次", isOn: $isWeekly)
                 if isWeekly {
                     Stepper("每周 \(timesPerWeek) 次", value: $timesPerWeek, in: 1...6)

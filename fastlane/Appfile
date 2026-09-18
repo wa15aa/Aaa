@@ -1,0 +1,8 @@
+# Fastlane Appfile — Steady
+# 文档见 docs/FASTLANE.md（用户需完成的步骤清单在里面）
+
+app_identifier("sh.steadyhabit.Steady")
+
+# 以下值在开发者账号下来后填写（或用环境变量覆盖）：
+# apple_id(ENV["ASC_APPLE_ID"])   # App Store Connect 账号邮箱
+# itc_team_id / team_id 由 ASC API key 自动解析时可省略
