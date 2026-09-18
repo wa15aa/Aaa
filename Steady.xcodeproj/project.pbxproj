@@ -1,0 +1,327 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		024B56554EC65523C02BF08F /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */; };
+		1A6170890734FDFCE63A1DED /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94F35C004F10644A71F9DC5 /* NotificationManager.swift */; };
+		33D74C95EB644D39CD0EECE2 /* SteadyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */; };
+		54FC9EA8115E1CC3F85AC032 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B4520E21DC524DBDC73FDD /* PaywallView.swift */; };
+		61304DC08E94CB5657D9A939 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629143E033178FE717C1F005 /* ContentView.swift */; };
+		A92BC3117B353870C9717F48 /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 89B2C6FA6667CC730C1B291F /* SteadyCore */; };
+		C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */; };
+		CDE656DAC7762629DD9C74FD /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; };
+		F4FC303B57951F2E64EFA2D2 /* RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5937746994F72E84F727FF6 /* RepositoryTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		BEE3857C27A28E681120DE43 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F22E28659269B5ADA6A11B41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6E0EE4253784D97976912F5B;
+			remoteInfo = Steady;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapView.swift; sourceTree = "<group>"; };
+		0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SteadyApp.swift; sourceTree = "<group>"; };
+		116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SteadyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		429A2A6F44C40CF1F24C020C /* Steady.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Steady.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		629143E033178FE717C1F005 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		83B4520E21DC524DBDC73FDD /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		B5937746994F72E84F727FF6 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
+		D2CA95E55B1A36E020F1B615 /* StreakEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StreakEngine; path = StreakEngine; sourceTree = SOURCE_ROOT; };
+		E5339727CA3D396660B323AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		F94F35C004F10644A71F9DC5 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C52EA1691C20289004F43435 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CDE656DAC7762629DD9C74FD /* SteadyCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E9E8108BA09B1684E9AF318A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A92BC3117B353870C9717F48 /* SteadyCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		13A3188829ADF83C6225B878 /* Steady */ = {
+			isa = PBXGroup;
+			children = (
+				629143E033178FE717C1F005 /* ContentView.swift */,
+				034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */,
+				E5339727CA3D396660B323AF /* Info.plist */,
+				F94F35C004F10644A71F9DC5 /* NotificationManager.swift */,
+				83B4520E21DC524DBDC73FDD /* PaywallView.swift */,
+				0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */,
+				116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */,
+			);
+			path = Steady;
+			sourceTree = "<group>";
+		};
+		14D36E9966361AFF9737A195 /* SteadyTests */ = {
+			isa = PBXGroup;
+			children = (
+				B5937746994F72E84F727FF6 /* RepositoryTests.swift */,
+			);
+			path = SteadyTests;
+			sourceTree = "<group>";
+		};
+		3C2AE68268117C1A450BE285 = {
+			isa = PBXGroup;
+			children = (
+				B68766A8C2C9D9A7139137FB /* Packages */,
+				13A3188829ADF83C6225B878 /* Steady */,
+				14D36E9966361AFF9737A195 /* SteadyTests */,
+				884BEA2C9D9BFF9EE65B446C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		884BEA2C9D9BFF9EE65B446C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				429A2A6F44C40CF1F24C020C /* Steady.app */,
+				16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		B68766A8C2C9D9A7139137FB /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				D2CA95E55B1A36E020F1B615 /* StreakEngine */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		049A648C991D0AABAB63B7A2 /* SteadyTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 88873287A1835C5E7A7FF9C3 /* Build configuration list for PBXNativeTarget "SteadyTests" */;
+			buildPhases = (
+				E6413D6F18FD0A00F2513907 /* Sources */,
+				E9E8108BA09B1684E9AF318A /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				0300FB7587375F77DCDC5EC2 /* PBXTargetDependency */,
+			);
+			name = SteadyTests;
+			packageProductDependencies = (
+				89B2C6FA6667CC730C1B291F /* SteadyCore */,
+			);
+			productName = SteadyTests;
+			productReference = 16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		6E0EE4253784D97976912F5B /* Steady */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 0A3B37310B4B51FCC2142AB3 /* Build configuration list for PBXNativeTarget "Steady" */;
+			buildPhases = (
+				395A771FF73C211FD2B53462 /* Sources */,
+				C52EA1691C20289004F43435 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Steady;
+			packageProductDependencies = (
+				B05D83B6AED6656BE55FB8DD /* SteadyCore */,
+			);
+			productName = Steady;
+			productReference = 429A2A6F44C40CF1F24C020C /* Steady.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		F22E28659269B5ADA6A11B41 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 3C0689E7FF54517F5F6C8DDB /* Build configuration list for PBXProject "Steady" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 3C2AE68268117C1A450BE285;
+			packageReferences = (
+				DA18ACA6BBFB74FB28CAEF78 /* XCLocalSwiftPackageReference "StreakEngine" */,
+			);
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				6E0EE4253784D97976912F5B /* Steady */,
+				049A648C991D0AABAB63B7A2 /* SteadyTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		395A771FF73C211FD2B53462 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				61304DC08E94CB5657D9A939 /* ContentView.swift in Sources */,
+				C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */,
+				1A6170890734FDFCE63A1DED /* NotificationManager.swift in Sources */,
+				54FC9EA8115E1CC3F85AC032 /* PaywallView.swift in Sources */,
+				33D74C95EB644D39CD0EECE2 /* SteadyApp.swift in Sources */,
+				024B56554EC65523C02BF08F /* StoreKitManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E6413D6F18FD0A00F2513907 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F4FC303B57951F2E64EFA2D2 /* RepositoryTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		0300FB7587375F77DCDC5EC2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6E0EE4253784D97976912F5B /* Steady */;
+			targetProxy = BEE3857C27A28E681120DE43 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1557F39BFF48777613A8CAA0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		3AAED1A521514120F0EA4C27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Steady/Info.plist;
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
+				PRODUCT_NAME = Steady;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		6B34D5D319E9CDAC35867B88 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		A0AE70F7F8144205A296158E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.SteadyTests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Steady.app/Steady";
+			};
+			name = Release;
+		};
+		A3F98C9B4F0AE53E8950D728 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				INFOPLIST_FILE = Steady/Info.plist;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
+				PRODUCT_NAME = Steady;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D5872C6780523D5BF92B6272 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.SteadyTests;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Steady.app/Steady";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0A3B37310B4B51FCC2142AB3 /* Build configuration list for PBXNativeTarget "Steady" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A3F98C9B4F0AE53E8950D728 /* Debug */,
+				3AAED1A521514120F0EA4C27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3C0689E7FF54517F5F6C8DDB /* Build configuration list for PBXProject "Steady" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6B34D5D319E9CDAC35867B88 /* Debug */,
+				1557F39BFF48777613A8CAA0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		88873287A1835C5E7A7FF9C3 /* Build configuration list for PBXNativeTarget "SteadyTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D5872C6780523D5BF92B6272 /* Debug */,
+				A0AE70F7F8144205A296158E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		DA18ACA6BBFB74FB28CAEF78 /* XCLocalSwiftPackageReference "StreakEngine" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = StreakEngine;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		89B2C6FA6667CC730C1B291F /* SteadyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SteadyCore;
+		};
+		B05D83B6AED6656BE55FB8DD /* SteadyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SteadyCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = F22E28659269B5ADA6A11B41 /* Project object */;
+}

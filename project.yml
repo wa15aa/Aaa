@@ -1,0 +1,48 @@
+name: Steady
+options:
+  bundleIdPrefix: sh.steadyhabit
+  deploymentTarget:
+    iOS: "16.0"
+packages:
+  StreakEngine:
+    path: StreakEngine
+targets:
+  Steady:
+    type: application
+    platform: iOS
+    sources: [Steady]
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+        PRODUCT_NAME: Steady
+      configs:
+        Debug:
+          ONLY_ACTIVE_ARCH: YES
+    dependencies:
+      - package: StreakEngine
+        product: SteadyCore
+    info:
+      path: Steady/Info.plist
+      properties:
+        UILaunchScreen_Generation: YES
+        UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
+        CFBundleDisplayName: Steady
+  SteadyTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [SteadyTests]
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+    dependencies:
+      - target: Steady
+      - package: StreakEngine
+        product: SteadyCore
+schemes:
+  Steady:
+    build:
+      targets:
+        Steady: all
+        SteadyTests: [test]
+    test:
+      targets: [SteadyTests]
