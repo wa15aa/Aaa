@@ -38,18 +38,9 @@ jobs:
 
       - name: Build iOS app (simulator)
         run: |
-          DEST=$(xcrun simctl list devices available -j | python3 -c '
-          import json,sys
-          d=json.load(sys.stdin)["devices"]
-          for runtime in sorted(d, reverse=True):
-              devs=[x for x in d[runtime] if x["isAvailable"] and "iPhone" in x["name"]]
-              if "iOS" in runtime and devs:
-                  print(f"platform=iOS Simulator,name={devs[0]['name']}"); break
-          ')
-          echo "Using destination: $DEST"
           set -o pipefail
           if ! xcodebuild -project Steady.xcodeproj -scheme Steady \
-            -destination "$DEST" \
+            -destination 'generic/platform=iOS Simulator' \
             -derivedDataPath DerivedData build | tee build.log; then
             { echo '## ❌ xcodebuild failed — last errors'; echo '```';
               grep -iE 'error:|warning: .*deprecated' build.log | head -40;
