@@ -47,6 +47,12 @@ jobs:
                   print(f"platform=iOS Simulator,name={devs[0]['name']}"); break
           ')
           echo "Using destination: $DEST"
-          xcodebuild -project Steady.xcodeproj -scheme Steady \
+          set -o pipefail
+          if ! xcodebuild -project Steady.xcodeproj -scheme Steady \
             -destination "$DEST" \
-            -derivedDataPath DerivedData build
+            -derivedDataPath DerivedData build | tee build.log; then
+            { echo '## ❌ xcodebuild failed — last errors'; echo '```';
+              grep -iE 'error:|warning: .*deprecated' build.log | head -40;
+              echo '--- tail ---'; tail -40 build.log; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
