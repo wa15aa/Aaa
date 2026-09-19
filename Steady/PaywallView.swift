@@ -40,6 +40,7 @@ struct PaywallView: View {
             VStack(alignment: .leading, spacing: 10) {
                 feature("Detailed stats & full history heatmap")
                 feature("Quit habits — slip days don't break you")
+                feature("Unlimited habits, all views & widget")
                 feature("Encrypted iCloud backup — survives reinstalls")
             }
             .padding(.vertical)
