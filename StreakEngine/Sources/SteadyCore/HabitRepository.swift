@@ -25,7 +25,8 @@ public final class HabitRepository {
     @discardableResult
     public func createHabit(name: String, icon: String, colorHex: String,
                      frequency: Frequency, sortOrder: Int16 = 0) -> HabitEntity {
-        let h = HabitEntity(context: context)
+        // 用 context 所属 model 解析实体（同进程多 container 时 +entity 全局查找会二义）
+        let h = HabitEntity(entity: NSEntityDescription.entity(forEntityName: "Habit", in: context)!, insertInto: context)
         h.id = UUID()
         h.name = String(name.prefix(30))
         h.icon = icon
@@ -39,8 +40,20 @@ public final class HabitRepository {
         h.createdAt = Date()
         h.createdDay = Self.todayKey()
         h.sortOrder = sortOrder
+        // -1 = 未设提醒（0:00 是合法提醒时间，不能用 0 当哨兵）
+        h.reminderHour = -1; h.reminderMinute = -1
         save()
         return h
+    }
+
+    /// 设置/清除每日提醒时间。hour 传 nil 表示清除。
+    public func setReminder(habit: HabitEntity, hour: Int?, minute: Int?) {
+        if let hour = hour, let minute = minute, (0...23).contains(hour), (0...59).contains(minute) {
+            habit.reminderHour = Int16(hour); habit.reminderMinute = Int16(minute)
+        } else {
+            habit.reminderHour = -1; habit.reminderMinute = -1
+        }
+        save()
     }
 
     /// 软删：数据保留
@@ -66,7 +79,7 @@ public final class HabitRepository {
         if backfill && !StreakEngine.canBackfill(day: DayKey(dayKey), today: DayKey(Self.todayKey())) {
             return false // 只允许补昨天
         }
-        let c = CheckinEntity(context: context)
+        let c = CheckinEntity(entity: NSEntityDescription.entity(forEntityName: "Checkin", in: context)!, insertInto: context)
         c.id = UUID()
         c.habitId = habitId
         c.day = dayKey

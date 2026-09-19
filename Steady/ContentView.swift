@@ -176,6 +176,8 @@ struct AddHabitView: View {
         if hasReminder {
             NotificationManager.requestAuthorization()
             let comps = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
+            // 先落库（备份会带走），再调度本地通知
+            repo.setReminder(habit: habit, hour: comps.hour, minute: comps.minute)
             NotificationManager.scheduleReminder(habitId: habit.id, name: habit.name,
                                                  hour: comps.hour, minute: comps.minute)
         }

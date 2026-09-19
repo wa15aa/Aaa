@@ -9,6 +9,8 @@ func check(_ cond: Bool, _ name: String) {
 }
 
 let key = SymmetricKey(size: .bits256)
+// securityd 在 CLI 下可能挂死（mach_msg 无响应），harness 全程注入密钥绕过 Keychain
+BackupService.keyOverrideForTesting = key
 
 // 1. 空库导出/恢复不炸
 let pc1 = PersistenceController.inMemory()
@@ -80,6 +82,18 @@ let pc4 = PersistenceController.inMemory()
 let ctx4 = pc4.container.viewContext
 check(BackupService.restoreFromBackupFile(context: ctx4) == true, "restore from backup file")
 check(HabitRepository(context: ctx4).activeHabits().count == 1, "file restore recovered habit")
+
+// 10. 提醒时间往返：0:00 是合法提醒（哨兵 -1=未设），未设保持未设
+let h3 = repo.createHabit(name: " midnight", icon: "moon.fill", colorHex: "AF52DE", frequency: .daily)
+repo.setReminder(habit: h3, hour: 0, minute: 0)
+let dataRem = try! BackupService.export(context: ctx1)
+// 复用 ctx2（同进程多 container 会触发 CoreData 实体二义性）；h3 对 ctx2 是新习惯会插入，h1 已在其中
+_ = try! BackupService.restore(context: ctx2, from: dataRem)
+let habits5 = repo2.activeHabits()
+let restoredMidnight = habits5.first { $0.id == h3.id }
+check(restoredMidnight?.reminderHour == 0 && restoredMidnight?.reminderMinute == 0, "0:00 reminder survives roundtrip")
+let restoredUnset = habits5.first { $0.id == h1.id }
+check(restoredUnset?.reminderHour == -1, "unset reminder stays unset (-1)")
 
 print("\(passed) passed, \(failed) failed")
 exit(failed == 0 ? 0 : 1)

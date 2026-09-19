@@ -46,8 +46,8 @@ public final class BackupService {
             habits: habits.map {
                 HabitDTO(id: $0.id, name: $0.name, icon: $0.icon, colorHex: $0.colorHex,
                          frequencyKind: $0.frequencyKind, timesPerWeek: $0.timesPerWeek,
-                         reminderHour: $0.reminderHour == 0 && $0.reminderMinute == 0 ? nil : $0.reminderHour,
-                         reminderMinute: $0.reminderHour == 0 && $0.reminderMinute == 0 ? nil : $0.reminderMinute,
+                         reminderHour: $0.reminderHour >= 0 ? $0.reminderHour : nil,
+                         reminderMinute: $0.reminderHour >= 0 ? $0.reminderMinute : nil,
                          createdAt: $0.createdAt, createdDay: $0.createdDay,
                          sortOrder: $0.sortOrder, archivedAt: $0.archivedAt)
             },
@@ -75,10 +75,10 @@ public final class BackupService {
             req.predicate = NSPredicate(format: "id == %@", dto.id as CVarArg)
             req.fetchLimit = 1
             if ((try? context.count(for: req)) ?? 0) > 0 { continue }
-            let h = HabitEntity(context: context)
+            let h = HabitEntity(entity: NSEntityDescription.entity(forEntityName: "Habit", in: context)!, insertInto: context)
             h.id = dto.id; h.name = dto.name; h.icon = dto.icon; h.colorHex = dto.colorHex
             h.frequencyKind = dto.frequencyKind; h.timesPerWeek = dto.timesPerWeek
-            h.reminderHour = dto.reminderHour ?? 0; h.reminderMinute = dto.reminderMinute ?? 0
+            h.reminderHour = dto.reminderHour ?? -1; h.reminderMinute = dto.reminderMinute ?? -1
             h.createdAt = dto.createdAt; h.createdDay = dto.createdDay
             h.sortOrder = dto.sortOrder; h.archivedAt = dto.archivedAt
             addedHabits += 1
@@ -88,7 +88,7 @@ public final class BackupService {
             req.predicate = NSPredicate(format: "habitId == %@ AND day == %@", dto.habitId as CVarArg, dto.day)
             req.fetchLimit = 1
             if ((try? context.count(for: req)) ?? 0) > 0 { continue }
-            let c = CheckinEntity(context: context)
+            let c = CheckinEntity(entity: NSEntityDescription.entity(forEntityName: "Checkin", in: context)!, insertInto: context)
             c.id = UUID(); c.habitId = dto.habitId; c.day = dto.day; c.ts = dto.ts
             c.backfill = dto.backfill; c.tzOffsetMinutes = dto.tzOffsetMinutes
             addedCheckins += 1
@@ -113,7 +113,10 @@ public final class BackupService {
     /// 设备密钥：Keychain 读取，不存在则生成 256-bit 随机密钥存入。
     /// 进程内缓存：CLI/无 entitlements 环境下 SecItemAdd 可能失败，缓存保证进程内加解密一致。
     private static var cachedKey: SymmetricKey?
+    /// 测试钩子：CLI harness 下 securityd 可能挂死（mach_msg 无响应），测试直接注入密钥绕过 Keychain。
+    public static var keyOverrideForTesting: SymmetricKey?
     public static func loadOrCreateKey() -> SymmetricKey {
+        if let k = keyOverrideForTesting { return k }
         if let k = cachedKey { return k }
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -198,7 +201,7 @@ public final class BackupService {
         let req = NSFetchRequest<BackupMetaEntity>(entityName: "BackupMeta")
         req.fetchLimit = 1
         if let m = try? context.fetch(req).first { return m }
-        let m = BackupMetaEntity(context: context)
+        let m = BackupMetaEntity(entity: NSEntityDescription.entity(forEntityName: "BackupMeta", in: context)!, insertInto: context)
         m.schemaVersion = schemaVersion
         return m
     }
