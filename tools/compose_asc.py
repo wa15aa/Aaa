@@ -24,7 +24,13 @@ def main():
     assert shot.size == (1170, 2532), shot.size
     canvas.paste(shot, (SHOT_X, SHOT_Y))
     d = ImageDraw.Draw(canvas)
-    font = ImageFont.truetype(FONT, FONT_SIZE, index=1)
+    size = FONT_SIZE
+    font = ImageFont.truetype(FONT, size, index=1)
+    # 自动缩字号防裁切：最长行超出 W-80 就按比缩小
+    longest = max((d.textlength(l, font=font) for l in lines), default=0)
+    if longest > W - 80:
+        size = int(size * (W - 80) / longest)
+        font = ImageFont.truetype(FONT, size, index=1)
     for i, line in enumerate(lines):
         w = d.textlength(line, font=font)
         d.text(((W - w) / 2, CAPTION_TOP + i * LINE_GAP), line, font=font, fill=(20, 20, 22))
