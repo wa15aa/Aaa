@@ -16,6 +16,8 @@ struct ContentView: View {
     @State private var autoShowPaywall = false
     @State private var showStatsPaywall = false
     @State private var showSettings = false
+    // W7 视图批①：主页 3 视图（list 清单 / week 周表矩阵 / compact 紧凑），胶囊切换器
+    @AppStorage("steady.homeViewMode") private var viewMode = 0
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -24,11 +26,13 @@ struct ContentView: View {
             Group {
                 if habits.isEmpty {
                     emptyState
+                } else if viewMode == 1 {
+                    weekMatrixView
                 } else {
                     List {
                         Section {
                             ForEach(habits, id: \.id) { habit in
-                                habitRow(habit)
+                                if viewMode == 2 { compactRow(habit) } else { habitRow(habit) }
                             }
                             .onMove { from, to in
                                 // W7 设置批：拖拽排序持久化到 sortOrder
@@ -55,6 +59,9 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Today")
+            .overlay(alignment: .bottom) {
+                if !habits.isEmpty { viewSwitcher }
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button { showSettings = true } label: { Image(systemName: "gearshape") }
@@ -131,6 +138,105 @@ struct ContentView: View {
             .buttonStyle(.plain)
             .disabled(checkedToday.contains(habit.id))
         }
+    }
+
+    /// 紧凑行（视图 2）：只有 icon+名+streak+打卡钮，无副标题无小点
+    @MainActor
+    private func compactRow(_ habit: HabitEntity) -> some View {
+        HStack {
+            Image(systemName: habit.icon)
+                .foregroundColor(Color(hex: habit.colorHex))
+            Text(habit.name).font(.subheadline)
+            Text("\(streaks[habit.id] ?? 0)d")
+                .font(.caption).foregroundColor(.secondary)
+            Spacer()
+            Button {
+                if repo.checkin(habitId: habit.id) { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
+                reload()
+            } label: {
+                Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
+                    .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+            }
+            .buttonStyle(.plain)
+            .disabled(checkedToday.contains(habit.id))
+        }
+    }
+
+    /// 周表矩阵（视图 1）：行=习惯，列=本周 7 天，点格子补卡/撤销（quit 型=标破戒）
+    @MainActor
+    private var weekMatrixView: some View {
+        let today = DayKey(HabitRepository.todayKey())
+        let ws = StreakEngine.weekStart(today)
+        let days = (0..<7).map { StreakEngine.addDays(ws, $0) }
+        let letters = ["M","T","W","T","F","S","S"]
+        return List {
+            // 列头
+            HStack(spacing: 6) {
+                Text("").frame(maxWidth: .infinity, alignment: .leading)
+                ForEach(Array(days.enumerated()), id: \.offset) { i, d in
+                    Text(letters[i])
+                        .font(.caption2).bold()
+                        .foregroundColor(d == today ? .accentColor : .secondary)
+                        .frame(width: 28)
+                }
+            }
+            ForEach(habits, id: \.id) { h in
+                HStack(spacing: 6) {
+                    Label(h.name, systemImage: h.icon)
+                        .labelStyle(.titleAndIcon)
+                        .font(.caption)
+                        .foregroundColor(Color(hex: h.colorHex))
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    ForEach(days, id: \.raw) { d in
+                        weekCell(habit: h, day: d, today: today)
+                    }
+                }
+            }
+        }
+    }
+
+    @MainActor
+    private func weekCell(habit: HabitEntity, day: DayKey, today: DayKey) -> some View {
+        let set = Set(repo.allCheckins(habitId: habit.id).map { DayKey($0.day) })
+        let marked = set.contains(day)
+        let future = day > today
+        return Button {
+            guard !future else { return }
+            if marked { _ = repo.removeCheckin(habitId: habit.id, day: day.raw) }
+            else { _ = repo.checkin(habitId: habit.id, day: day.raw) }
+            reload()
+        } label: {
+            Image(systemName: marked ? "checkmark.circle.fill" : "circle")
+                .font(.subheadline)
+                .foregroundColor(marked ? Color(hex: habit.colorHex)
+                                 : future ? Color(.systemGray5) : Color(.systemGray3))
+                .frame(width: 28)
+        }
+        .buttonStyle(.plain)
+        .disabled(future)
+    }
+
+    /// 底部胶囊切换器（W7 视图批①，参考 HabitKit 02 页）
+    private var viewSwitcher: some View {
+        HStack(spacing: 0) {
+            ForEach([(0, "list.bullet", "List"), (1, "calendar.day.timeline.leading", "Week"), (2, "rectangle.compress.vertical", "Compact")], id: \.0) { mode, icon, name in
+                Button { withAnimation(.easeInOut(duration: 0.15)) { viewMode = mode } } label: {
+                    Label(name, systemImage: icon)
+                        .font(.caption).bold()
+                        .padding(.horizontal, 14).padding(.vertical, 8)
+                        .background(viewMode == mode ? Color.accentColor : Color.clear)
+                        .foregroundColor(viewMode == mode ? .white : .secondary)
+                        .cornerRadius(16)
+                }
+            }
+        }
+        .padding(4)
+        .background(.regularMaterial)
+        .cornerRadius(20)
+        .shadow(radius: 4)
+        .padding(.bottom, 8)
     }
 
     private func rowLabel(_ habit: HabitEntity) -> some View {
