@@ -6,7 +6,7 @@ let package = Package(
     platforms: [.iOS(.v15), .macOS(.v12)],
     products: [
         .library(name: "StreakEngine", targets: ["StreakEngine"]),
-        .library(name: "SteadyCore", targets: ["SteadyCore"])
+        .library(name: "SteadyCore", type: .dynamic, targets: ["SteadyCore"])
     ],
     targets: [
         .target(name: "StreakEngine"),

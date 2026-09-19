@@ -16,6 +16,7 @@ targets:
         SWIFT_VERSION: "5.0"
         PRODUCT_NAME: Steady
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        LD_RUNPATH_SEARCH_PATHS: ["$(inherited)", "@executable_path/Frameworks"]
       configs:
         Debug:
           ONLY_ACTIVE_ARCH: YES
@@ -23,6 +24,7 @@ targets:
     dependencies:
       - package: StreakEngine
         product: SteadyCore
+        embed: true
     info:
       path: Steady/Info.plist
       properties:
@@ -40,6 +42,12 @@ targets:
     settings:
       base:
         GENERATE_INFOPLIST_FILE: YES
+        SWIFT_VERSION: "5.0"
+        PRODUCT_NAME: SteadyTests
+        PRODUCT_BUNDLE_IDENTIFIER: sh.steadyhabit.SteadyTests
+      configs:
+        Debug:
+          ONLY_ACTIVE_ARCH: YES
     dependencies:
       - target: Steady
       - package: StreakEngine

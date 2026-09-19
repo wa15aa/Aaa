@@ -16,6 +16,7 @@
 		A92BC3117B353870C9717F48 /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 89B2C6FA6667CC730C1B291F /* SteadyCore */; };
 		C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */; };
 		CDE656DAC7762629DD9C74FD /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; };
+		E35FD3C0116DF2F21A300203 /* SteadyCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F4FC303B57951F2E64EFA2D2 /* RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5937746994F72E84F727FF6 /* RepositoryTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -28,6 +29,20 @@
 			remoteInfo = Steady;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		A7E5BD3BF6D2E52DCA45489E /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				E35FD3C0116DF2F21A300203 /* SteadyCore in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeatmapView.swift; sourceTree = "<group>"; };
@@ -144,6 +159,7 @@
 				395A771FF73C211FD2B53462 /* Sources */,
 				FFE82EEBEE57857E961FC55F /* Resources */,
 				C52EA1691C20289004F43435 /* Frameworks */,
+				A7E5BD3BF6D2E52DCA45489E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -246,6 +262,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Steady/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
 				PRODUCT_NAME = Steady;
 				SWIFT_VERSION = 5.0;
@@ -265,6 +285,8 @@
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.SteadyTests;
+				PRODUCT_NAME = SteadyTests;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Steady.app/Steady";
 			};
 			name = Release;
@@ -274,6 +296,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Steady/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
 				PRODUCT_NAME = Steady;
@@ -286,7 +312,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				GENERATE_INFOPLIST_FILE = YES;
+				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.SteadyTests;
+				PRODUCT_NAME = SteadyTests;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Steady.app/Steady";
 			};
 			name = Debug;
