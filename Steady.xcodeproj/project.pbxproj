@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		024B56554EC65523C02BF08F /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */; };
+		19F4A8E5C363C55CD7124D53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */; };
 		1A6170890734FDFCE63A1DED /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94F35C004F10644A71F9DC5 /* NotificationManager.swift */; };
 		33D74C95EB644D39CD0EECE2 /* SteadyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */; };
 		54FC9EA8115E1CC3F85AC032 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B4520E21DC524DBDC73FDD /* PaywallView.swift */; };
@@ -37,6 +38,7 @@
 		629143E033178FE717C1F005 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		83B4520E21DC524DBDC73FDD /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		B5937746994F72E84F727FF6 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
+		BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D2CA95E55B1A36E020F1B615 /* StreakEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StreakEngine; path = StreakEngine; sourceTree = SOURCE_ROOT; };
 		E5339727CA3D396660B323AF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		F94F35C004F10644A71F9DC5 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		13A3188829ADF83C6225B878 /* Steady */ = {
 			isa = PBXGroup;
 			children = (
+				BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */,
 				629143E033178FE717C1F005 /* ContentView.swift */,
 				034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */,
 				E5339727CA3D396660B323AF /* Info.plist */,
@@ -139,6 +142,7 @@
 			buildConfigurationList = 0A3B37310B4B51FCC2142AB3 /* Build configuration list for PBXNativeTarget "Steady" */;
 			buildPhases = (
 				395A771FF73C211FD2B53462 /* Sources */,
+				FFE82EEBEE57857E961FC55F /* Resources */,
 				C52EA1691C20289004F43435 /* Frameworks */,
 			);
 			buildRules = (
@@ -185,6 +189,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		FFE82EEBEE57857E961FC55F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				19F4A8E5C363C55CD7124D53 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		395A771FF73C211FD2B53462 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -229,6 +244,7 @@
 		3AAED1A521514120F0EA4C27 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Steady/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
 				PRODUCT_NAME = Steady;
@@ -256,6 +272,7 @@
 		A3F98C9B4F0AE53E8950D728 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = Steady/Info.plist;
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
