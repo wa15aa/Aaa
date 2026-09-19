@@ -3,14 +3,14 @@
 
 ## en-US（主）
 
-**Name (30 字符上限)**
-Steady: Guilt-Free Habits
+**Name (30 字符上限)**（ASO 卡：关键词前置排名更优，HabitKit 证据 98% 搜索下载）
+Habit Tracker - Steady
 
-**Subtitle (30 字符上限)**
-Streaks that forgive a miss
+**Subtitle (30 字符上限)**（卖点词即关键词；与标题零重复）
+Never miss twice, streaks live
 
-**Keywords (100 字符，逗号分隔不带空格后赘词)**
-habit tracker,streak,daily habits,routine,habit builder,consistency,heatmap,reminder,productivity,self improvement
+**Keywords (95/100 字符，逗号分隔无空格；已与标题副标题去重、无复数变体)**
+recovery,daily,routine,reminder,widget,atomic,goal,planner,consistency,heatmap,focus,discipline
 
 **Promotional Text (170 字符，可不改版本随时更新)**
 Missed a day? Your streak survives. Steady uses never-miss-twice: one miss is data, two break the chain. One-time $12.99, no subscription, your data never leaves your hands.
@@ -52,6 +52,11 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 | 01_today | One tap. Done for today. |
 | 02_detail | Miss a day. Keep your streak. |
 | 03_paywall | $12.99 once. No subscription. |
+
+## ASO 依据（2026-09-18 sage 卡 aso-keyword-strategy-habit 采纳）
+- 关键词前置标题 + 副标题卖点词；"habit tracker" 难度 64 走长尾，差异化词（never miss twice / streak recovery 语义）意图精准
+- 本地化倍增：上架时加 Spanish (MX) locale 吃美区额外 100 字符关键词位（无需真翻译）
+- [verify 2027-01-15] 预测：主词 4 周进不了前 50，长尾应进前 20；全灭则投 ASA 验证词包
 
 ## 待用户侧配合
 - 截图上传到 ASC 需开发者账号（waiting_on_user.md #1）
