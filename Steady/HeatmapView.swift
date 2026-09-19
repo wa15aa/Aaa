@@ -32,19 +32,27 @@ struct HeatmapView: View {
     private var accent: Color { Color(hex: habit.colorHex) }
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            Canvas { ctx, size in
-                for (w, week) in weeks.enumerated() {
-                    for (d, day) in week.enumerated() {
-                        let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
-                        let rect = CGRect(x: CGFloat(w) * (cell + gap), y: CGFloat(d) * (cell + gap), width: cell, height: cell)
-                        let path = Path(roundedRect: rect, cornerRadius: 2.5)
-                        ctx.fill(path, with: .color(color(for: state)))
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 0) {
+                    Canvas { ctx, size in
+                        for (w, week) in weeks.enumerated() {
+                            for (d, day) in week.enumerated() {
+                                let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
+                                let rect = CGRect(x: CGFloat(w) * (cell + gap), y: CGFloat(d) * (cell + gap), width: cell, height: cell)
+                                let path = Path(roundedRect: rect, cornerRadius: 2.5)
+                                ctx.fill(path, with: .color(color(for: state)))
+                            }
+                        }
                     }
+                    .frame(width: CGFloat(weeks.count) * (cell + gap), height: 7 * (cell + gap))
+                    Color.clear.frame(width: 1).id("heatmapEnd")
                 }
             }
-            .frame(width: CGFloat(weeks.count) * (cell + gap), height: 7 * (cell + gap))
+            // 默认滚到最新一周（否则当年视图停留在 1 月，近期打卡看不见）
+            .onAppear { proxy.scrollTo("heatmapEnd", anchor: .trailing) }
         }
+        .frame(height: 7 * (cell + gap))
         // Canvas 内不便于逐格手势，叠加一层透明热区
         .overlay(heatmapTapOverlay)
     }

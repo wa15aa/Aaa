@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var checkedToday: Set<UUID> = []
     @State private var weeklyProgress: [UUID: Int] = [:]
     @State private var showAdd = false
+    @State private var autoShowDetail = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -30,6 +31,14 @@ struct ContentView: View {
                                 .foregroundColor(.secondary)
                         }
                     }
+                    // DEBUG 截图管线：screenshotMode=detail 时自动进第一个习惯的详情页
+                    .background(
+                        NavigationLink(isActive: $autoShowDetail) {
+                            if let first = habits.first {
+                                HabitDetailView(habit: first, repo: repo)
+                            }
+                        } label: { EmptyView() }.hidden()
+                    )
                 }
             }
             .navigationTitle("今天")
@@ -122,6 +131,12 @@ struct ContentView: View {
                 weeklyProgress[h.id] = checkins.filter { $0.day >= weekStart.raw && $0.day <= today.raw }.count
             }
         }
+        #if DEBUG
+        // 截图管线：defaults write sh.steadyhabit.Steady screenshotMode detail
+        if UserDefaults.standard.string(forKey: "screenshotMode") == "detail", !habits.isEmpty {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowDetail = true }
+        }
+        #endif
     }
 }
 
