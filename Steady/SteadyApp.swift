@@ -46,6 +46,15 @@ struct SteadyApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistence.container.viewContext)
+                // W7 一页式 onboarding：首启动一次；截图管线跳过（screenshotMode 优先）
+                .fullScreenCover(isPresented: .init(
+                    get: {
+                        !UserDefaults.standard.bool(forKey: "steady.onboarded")
+                            && UserDefaults.standard.string(forKey: "screenshotMode") == nil
+                    },
+                    set: { _ in })) {
+                        OnboardingView()
+                    }
         }
     }
 }

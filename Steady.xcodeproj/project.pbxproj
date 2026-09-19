@@ -17,6 +17,7 @@
 		A92BC3117B353870C9717F48 /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 89B2C6FA6667CC730C1B291F /* SteadyCore */; };
 		C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */; };
 		CDE656DAC7762629DD9C74FD /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; };
+		D4BDC9D37A1C066EB4495CF0 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE126F15FA669A8293961D9 /* OnboardingView.swift */; };
 		E35FD3C0116DF2F21A300203 /* SteadyCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F4FC303B57951F2E64EFA2D2 /* RepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5937746994F72E84F727FF6 /* RepositoryTests.swift */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 		16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SteadyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		429A2A6F44C40CF1F24C020C /* Steady.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Steady.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		629143E033178FE717C1F005 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		7BE126F15FA669A8293961D9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		83B4520E21DC524DBDC73FDD /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		B5937746994F72E84F727FF6 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
 		BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -89,6 +91,7 @@
 				034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */,
 				E5339727CA3D396660B323AF /* Info.plist */,
 				F94F35C004F10644A71F9DC5 /* NotificationManager.swift */,
+				7BE126F15FA669A8293961D9 /* OnboardingView.swift */,
 				83B4520E21DC524DBDC73FDD /* PaywallView.swift */,
 				E017EC5D12183A5DFE0DFFD2 /* SettingsView.swift */,
 				0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */,
@@ -227,6 +230,7 @@
 				61304DC08E94CB5657D9A939 /* ContentView.swift in Sources */,
 				C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */,
 				1A6170890734FDFCE63A1DED /* NotificationManager.swift in Sources */,
+				D4BDC9D37A1C066EB4495CF0 /* OnboardingView.swift in Sources */,
 				54FC9EA8115E1CC3F85AC032 /* PaywallView.swift in Sources */,
 				0145C42D478CAB89638EF120 /* SettingsView.swift in Sources */,
 				33D74C95EB644D39CD0EECE2 /* SteadyApp.swift in Sources */,
