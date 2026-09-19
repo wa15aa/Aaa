@@ -49,9 +49,11 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 ## 截图-文案配对建议
 | 截图 | 顶部标题文案（ASO 惯例：截图上加粗短句） |
 |---|---|
-| 01_today | One tap. Done for today. |
-| 02_detail | Miss a day. Keep your streak. |
+| 01_today | Missed a day? You're still in. |
+| 02_detail | Every streak survives. Counted forever. |
 | 03_paywall | $12.99 once. No subscription. |
+
+（2026-09-19 改版：采纳 sage aso-screenshot-paywall-ab 三帧假设——首帧即抛差异化、机制文案>功能文案；03 保留具体价格版，比 "One price" 更过滤。合成脚本 tools/compose_asc.py）
 
 ## ASO 依据（2026-09-18 sage 卡 aso-keyword-strategy-habit 采纳）
 - 关键词前置标题 + 副标题卖点词；"habit tracker" 难度 64 走长尾，差异化词（never miss twice / streak recovery 语义）意图精准
