@@ -58,6 +58,11 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 - 本地化倍增：上架时加 Spanish (MX) locale 吃美区额外 100 字符关键词位（无需真翻译）
 - [verify 2027-01-15] 预测：主词 4 周进不了前 50，长尾应进前 20；全灭则投 ASA 验证词包
 
+## Spanish (MX) locale 关键词位（本地化倍增，美区额外 100 字符）
+- Name/Subtitle 直接复用 en-US（无需真翻译）
+- Keywords (94/100)：habitos,racha,seguimiento,diario,rutina,recordatorio,productividad,constancia,proposito,habito
+- 依据 kb aso-keyword-strategy-habit：美区最多索引 10 locale，MX 是经典免费位
+
 ## 待用户侧配合
 - 截图上传到 ASC 需开发者账号（waiting_on_user.md #1）
 - 关键词上线后 2 周看搜索排名再迭代（记入 growth KB 对账）
