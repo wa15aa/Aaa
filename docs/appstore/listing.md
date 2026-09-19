@@ -21,18 +21,22 @@ Most habit trackers punish you. Miss one day and watch your streak hit zero — 
 Steady is built on a different rule: never miss twice. One $12.99 purchase, no subscription — and encrypted iCloud sync, so your history survives a new phone.
 
 • ELASTIC STREAKS — One missed day dims the square but keeps your streak alive. Only two misses in a row start a new journey segment. Your history is never erased; it becomes your story.
+• QUIT HABITS, TOO — Quitting sugar or smoking? A quit habit is clean by default; you only mark slip days, and one slip never breaks you.
 • WEEKLY RHYTHMS — Gym 3x a week? Track by weekly targets, not daily guilt.
+• STATS THAT FORGIVE — Weekly and monthly charts count your consistency honestly — slips included, nothing erased.
 • ONE-TAP CHECK-IN — The app opens to today's list. One tap, a gentle haptic, done. No onboarding, no account, no quiz.
 • GITHUB-STYLE HEATMAP — Your whole year at a glance. Tap any square to see that day.
 • NEVER LOSE DATA — Local-first storage with encrypted daily backup to your iCloud Drive. Delete and reinstall, everything comes back.
 • ONE PRICE, FOREVER — $12.99 lifetime. The price is printed on the paywall's first line. No subscription, no trials that convert, no dark patterns.
+
+Three views (list, week board, compact), home-screen widget, up to 3 reminders per habit, custom day-end for night owls.
 
 Free to start: 3 habits with full functionality. Upgrade once when you want more.
 
 Built by an indie developer who broke one too many streaks.
 
 **What's New (1.0)**
-Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentle reminders, encrypted iCloud backup. One-time purchase, no subscription — ever.
+Initial release: elastic streaks that survive a missed day, quit-habit tracking (slip days don't break you), yearly heatmap + weekly/monthly charts, weekly-frequency habits, up to 3 reminders per habit, home-screen widget, encrypted iCloud backup. One-time purchase, no subscription — ever.
 
 ---
 
@@ -42,7 +46,7 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 **副标题**：断一天，不清零
 
 **描述要点**（直译自 en，上架时再润色）：
-多数习惯 App 在惩罚你。断签一天，连续天数归零，动力一起归零。Steady 的规则是"别断两天"：断一天格子变暗但 streak 保留，连断两天才开启新一段旅程——历史永远保留。每周 N 次节奏、一键打卡、GitHub 式年度热力图、加密 iCloud 备份。$12.99 一次买断，价格印在付费页第一行，无订阅无套路。
+多数习惯 App 在惩罚你。断签一天，连续天数归零，动力一起归零。Steady 的规则是"别断两天"：断一天格子变暗但 streak 保留，连断两天才开启新一段旅程——历史永远保留。还能戒习惯：戒糖戒烟默认今天是守住的，只标破戒天，破一次不清零。每周 N 次节奏、一键打卡、GitHub 式年度热力图、周/月图表、每习惯 3 条提醒、桌面小组件、加密 iCloud 备份。$12.99 一次买断，价格印在付费页第一行，无订阅无套路。
 
 ---
 
