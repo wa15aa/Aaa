@@ -16,8 +16,12 @@ public final class HabitRepository {
         return f // 不锁时区：本地"天"语义
     }
 
+    /// 截止判定（W7 设置欠项）：dayCutoffHour>0 时，凌晨 0..<cutoff 时刻算前一天
+    /// （夜猫子睡前打卡仍记当天）。默认 0 = 日历日。存 UserDefaults "steady.dayCutoffHour"。
     public static func todayKey(now: Date = Date()) -> String {
-        localDayFormatter.string(from: now)
+        let cutoff = UserDefaults.standard.integer(forKey: "steady.dayCutoffHour")
+        let effective = cutoff > 0 ? now.addingTimeInterval(TimeInterval(-cutoff * 3600)) : now
+        return localDayFormatter.string(from: effective)
     }
 
     // MARK: CRUD

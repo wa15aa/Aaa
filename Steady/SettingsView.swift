@@ -12,6 +12,8 @@ struct SettingsView: View {
     @AppStorage("steady.showBadge") private var showBadge = true
     @AppStorage("steady.showStreaks") private var showStreaks = true
     @AppStorage("steady.showWeekDots") private var showWeekDots = true
+    @AppStorage("steady.showOverview") private var showOverview = true
+    @AppStorage("steady.dayCutoffHour") private var dayCutoffHour = 0
 
     @State private var archived: [HabitEntity] = []
     @State private var confirmDelete: HabitEntity? = nil
@@ -35,12 +37,34 @@ struct SettingsView: View {
                         .onChange(of: showBadge) { v in
                             if !v { UIApplication.shared.applicationIconBadgeNumber = 0 }
                         }
+                    // 截止判定：夜猫子场景，凌晨 cutoff 前打卡算前一天
+                    Picker("Day ends at", selection: $dayCutoffHour) {
+                        Text("Midnight").tag(0)
+                        Text("2 AM").tag(2)
+                        Text("4 AM").tag(4)
+                        Text("6 AM").tag(6)
+                    }
                 }
 
                 // W7④ 面板自定义：Today 行显示元素开关（对齐 HabitKit Dashboard Customization）
                 Section("Dashboard") {
+                    Toggle("Show overview header", isOn: $showOverview)
                     Toggle("Show streak counts", isOn: $showStreaks)
                     Toggle("Show week dots", isOn: $showWeekDots)
+                }
+
+                // Theme / Language：v1.1 占位（先占位防审核期被催功能，点击无操作）
+                Section("Coming soon") {
+                    HStack {
+                        Text("Theme")
+                        Spacer()
+                        Text("v1.1").foregroundColor(.secondary)
+                    }
+                    HStack {
+                        Text("Language")
+                        Spacer()
+                        Text("v1.1").foregroundColor(.secondary)
+                    }
                 }
 
                 Section("Archived habits") {

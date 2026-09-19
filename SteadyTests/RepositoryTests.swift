@@ -59,3 +59,21 @@ final class RepositoryTests: XCTestCase {
         XCTAssertEqual(s.todayState, .done)
     }
 }
+
+// W7 截止判定：dayCutoffHour>0 时凌晨时刻算前一天
+final class CutoffTests: XCTestCase {
+    override func tearDown() {
+        UserDefaults.standard.removeObject(forKey: "steady.dayCutoffHour")
+    }
+    func testCutoff_rollsEarlyMorningToPreviousDay() {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = .current
+        let day = cal.date(from: DateComponents(year: 2026, month: 9, day: 19, hour: 1, minute: 30))!
+        UserDefaults.standard.set(0, forKey: "steady.dayCutoffHour")
+        XCTAssertEqual(HabitRepository.todayKey(now: day), "2026-09-19")
+        UserDefaults.standard.set(4, forKey: "steady.dayCutoffHour")
+        XCTAssertEqual(HabitRepository.todayKey(now: day), "2026-09-18") // 凌晨1:30<4am → 算昨天
+        let noon = cal.date(from: DateComponents(year: 2026, month: 9, day: 19, hour: 12))!
+        XCTAssertEqual(HabitRepository.todayKey(now: noon), "2026-09-19")
+    }
+}

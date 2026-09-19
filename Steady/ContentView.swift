@@ -21,6 +21,7 @@ struct ContentView: View {
     // W7④ 面板自定义：streak 数字 / 周小点 显示开关（设置页 Dashboard 段）
     @AppStorage("steady.showStreaks") private var showStreaks = true
     @AppStorage("steady.showWeekDots") private var showWeekDots = true
+    @AppStorage("steady.showOverview") private var showOverview = true
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -46,12 +47,15 @@ struct ContentView: View {
                             }
                         } header: {
                             // quit 型默认"已守住"，不计入待完成数；破戒标记也不是 done
-                            let buildHabits = habits.filter { $0.habitType != "quit" }
-                            let buildDone = buildHabits.filter { checkedToday.contains($0.id) }.count
-                            Text("\(buildDone) of \(buildHabits.count) done today")
-                                .textCase(nil)
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
+                            // Overview 开关（设置页 Dashboard 段）可整体关掉这行
+                            if showOverview {
+                                let buildHabits = habits.filter { $0.habitType != "quit" }
+                                let buildDone = buildHabits.filter { checkedToday.contains($0.id) }.count
+                                Text("\(buildDone) of \(buildHabits.count) done today")
+                                    .textCase(nil)
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                     // DEBUG 截图管线：screenshotMode=detail 时自动进第一个习惯的详情页
