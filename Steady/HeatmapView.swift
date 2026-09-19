@@ -118,10 +118,10 @@ struct HabitDetailView: View {
                 Text(habit.name).font(.title2)
             }
             HStack(spacing: 24) {
-                stat("当前", "\(state.current)")
-                stat("最佳", "\(state.best)")
-                stat("历史段", "\(state.segments.count)")
-                stat("完成率", "\(completionRate)%")
+                stat("Current", "\(state.current)")
+                stat("Best", "\(state.best)")
+                stat("Journeys", "\(state.segments.count)")
+                stat("Rate", "\(completionRate)%")
             }
             HeatmapView(habit: habit,
                         checkins: checkinSet,
@@ -136,7 +136,7 @@ struct HabitDetailView: View {
             Spacer()
         }
         .padding()
-        .navigationTitle("详情")
+        .navigationTitle("Details")
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -146,11 +146,11 @@ struct HabitDetailView: View {
 
     private func label(for state: DayState) -> String {
         switch state {
-        case .done: return "已完成"
-        case .dimmed: return "断签 1 天（streak 仍保留）"
-        case .missed: return "未打卡"
-        case .future: return "未来"
-        case .beforeStart: return "习惯创建前"
+        case .done: return "Done"
+        case .dimmed: return "Missed 1 day — streak survived"
+        case .missed: return "Missed"
+        case .future: return "Upcoming"
+        case .beforeStart: return "Before habit created"
         }
     }
 }

@@ -21,8 +21,8 @@ check(r0 == (0, 0), "empty export/restore")
 
 // 2. 建数据：2 习惯（daily + weekly）+ 若干打卡
 let repo = HabitRepository(context: ctx1)
-let h1 = repo.createHabit(name: "冥想", icon: "star.fill", colorHex: "4F8CFF", frequency: .daily)
-let h2 = repo.createHabit(name: "跑步", icon: "figure.run", colorHex: "FF6B6B", frequency: .timesPerWeek(3))
+let h1 = repo.createHabit(name: "Meditate", icon: "star.fill", colorHex: "4F8CFF", frequency: .daily)
+let h2 = repo.createHabit(name: "Run", icon: "figure.run", colorHex: "FF6B6B", frequency: .timesPerWeek(3))
 _ = repo.checkin(habitId: h1.id, day: "2026-09-16")
 _ = repo.checkin(habitId: h1.id, day: "2026-09-17")
 _ = repo.checkin(habitId: h2.id, day: "2026-09-15")
@@ -47,7 +47,7 @@ let habits2 = repo2.activeHabits()
 check(habits2.count == 2, "activeHabits after restore")
 let h1r = habits2.first { $0.id == h1.id }!
 check(repo2.streakState(for: h1r).current == streakBefore, "streak preserved across restore")
-check(h1r.name == "冥想" && h1r.createdDay == h1.createdDay, "habit fields preserved")
+check(h1r.name == "Meditate" && h1r.createdDay == h1.createdDay, "habit fields preserved")
 let h2r = habits2.first { $0.id == h2.id }!
 check(h2r.frequencyKind == "weekly" && h2r.timesPerWeek == 3, "weekly frequency preserved")
 
@@ -68,7 +68,7 @@ check((try? BackupService.decrypt(tampered, key: key)) == nil, "tampered ciphert
 let pc3 = PersistenceController.inMemory()
 let ctx3 = pc3.container.viewContext
 let repo3 = HabitRepository(context: ctx3)
-_ = repo3.createHabit(name: "阅读", icon: "book.fill", colorHex: "4F8CFF", frequency: .daily)
+_ = repo3.createHabit(name: "Read", icon: "book.fill", colorHex: "4F8CFF", frequency: .daily)
 // 用固定 key 路径不可测 performDailyBackup 的 Keychain 部分，但"同日跳过"逻辑可测
 let first = BackupService.performDailyBackup(context: ctx3, today: "2026-09-18")
 check(first == true, "first daily backup runs")

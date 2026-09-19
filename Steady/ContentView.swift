@@ -1,5 +1,6 @@
 import SwiftUI
 import SteadyCore
+import StreakEngine
 
 /// 首屏：今天清单 + 打卡 ≤1 次点击（MVP_SPEC §1）。
 struct ContentView: View {
@@ -9,6 +10,7 @@ struct ContentView: View {
     @State private var checkedToday: Set<UUID> = []
     @State private var weeklyProgress: [UUID: Int] = [:]
     @State private var segmentCounts: [UUID: Int] = [:]
+    @State private var last7: [UUID: [DayState]] = [:]
     @State private var showAdd = false
     @State private var autoShowDetail = false
     @State private var autoShowPaywall = false
@@ -27,7 +29,7 @@ struct ContentView: View {
                                 habitRow(habit)
                             }
                         } header: {
-                            Text("今天已完成 \(checkedToday.count)/\(habits.count)")
+                            Text("\(checkedToday.count) of \(habits.count) done today")
                                 .textCase(nil)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
@@ -43,7 +45,7 @@ struct ContentView: View {
                     )
                 }
             }
-            .navigationTitle("今天")
+            .navigationTitle("Today")
             .toolbar {
                 Button { showAdd = true } label: { Image(systemName: "plus") }
             }
@@ -63,12 +65,12 @@ struct ContentView: View {
             Image(systemName: "checkmark.circle")
                 .font(.system(size: 56))
                 .foregroundColor(.accentColor)
-            Text("还没有习惯")
+            Text("No habits yet")
                 .font(.title2).bold()
-            Text("从一个最小行动开始，\n断一天没关系，别断两天。")
+            Text("Start with one tiny action.\nMissing one day is fine — never miss two.")
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
-            Button("创建第一个习惯") { showAdd = true }
+            Button("Create your first habit") { showAdd = true }
                 .buttonStyle(.borderedProminent)
                 .padding(.top, 8)
         }
@@ -82,12 +84,18 @@ struct ContentView: View {
             } label: {
                 HStack {
                     Image(systemName: habit.icon)
+                        .font(.body)
                         .foregroundColor(Color(hex: habit.colorHex))
-                    VStack(alignment: .leading) {
+                        .frame(width: 36, height: 36)
+                        .background(Color(hex: habit.colorHex).opacity(0.15))
+                        .cornerRadius(10)
+                    VStack(alignment: .leading, spacing: 2) {
                         Text(habit.name)
+                            .font(.headline)
                         Text(subtitle(for: habit))
                             .font(.caption)
                             .foregroundColor(.secondary)
+                        weekDots(for: habit)
                     }
                 }
             }
@@ -101,7 +109,7 @@ struct ContentView: View {
                 reload()
             } label: {
                 Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
-                    .font(.title2)
+                    .font(.system(size: 26))
                     .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
             }
             .buttonStyle(.plain)
@@ -109,18 +117,39 @@ struct ContentView: View {
         }
     }
 
-    /// daily → "连续 X 天"；weekly → "本周 x/N · 连续 w 周"；streak 归零且有历史段 → "第 N 段旅程"（反罪恶感，MVP_SPEC §2）
+    /// daily → "X-day streak"；weekly → "This week x/N · w-week streak"；streak 归零且有历史段 → "Journey N"（反罪恶感，MVP_SPEC §2）
     private func subtitle(for habit: HabitEntity) -> String {
         let streak = streaks[habit.id] ?? 0
         let segments = segmentCounts[habit.id] ?? 0
         if streak == 0 && segments > 0 {
-            return "第 \(segments + 1) 段旅程 · 历史最佳仍在"
+            return "Journey \(segments + 1) · best streak still on record"
         }
         if habit.frequencyKind == "weekly" {
             let done = weeklyProgress[habit.id] ?? 0
-            return "本周 \(done)/\(habit.timesPerWeek) · 连续 \(streak) 周"
+            return "This week \(done)/\(habit.timesPerWeek) · \(streak)-week streak"
         }
-        return "连续 \(streak) 天"
+        return "\(streak)-day streak"
+    }
+
+    /// 最近 7 天小点：done=习惯色实点，dimmed=半透明（断签不死可视化），其余灰（MVP_SPEC §2 反罪恶感要可感知）
+    private func weekDots(for habit: HabitEntity) -> some View {
+        HStack(spacing: 4) {
+            let states = last7[habit.id] ?? []
+            ForEach(Array(states.enumerated()), id: \.offset) { _, st in
+                Circle()
+                    .fill(dotColor(st, hex: habit.colorHex))
+                    .frame(width: 6, height: 6)
+            }
+        }
+        .padding(.top, 2)
+    }
+
+    private func dotColor(_ st: DayState, hex: String) -> Color {
+        switch st {
+        case .done: return Color(hex: hex)
+        case .dimmed: return Color(hex: hex).opacity(0.35)
+        default: return Color(.systemGray4)
+        }
     }
 
     private func reload() {
@@ -140,6 +169,12 @@ struct ContentView: View {
             }
             if h.frequencyKind == "weekly" {
                 weeklyProgress[h.id] = checkins.filter { $0.day >= weekStart.raw && $0.day <= today.raw }.count
+            }
+            let cset = Set(checkins.map { DayKey($0.day) })
+            last7[h.id] = (0..<7).reversed().map { back in
+                let day = StreakEngine.addDays(today, -back)
+                return StreakEngine.dayState(day: day, checkins: cset,
+                                             createdDay: DayKey(h.createdDay), today: today)
             }
         }
         #if DEBUG
@@ -194,8 +229,8 @@ struct AddHabitView: View {
     var body: some View {
         NavigationView {
             Form {
-                TextField("习惯名字", text: $name)
-                Section("图标") {
+                TextField("Habit name", text: $name)
+                Section("Icon") {
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 10), count: 6), spacing: 10) {
                         ForEach(icons, id: \.self) { name in
                             Image(systemName: name)
@@ -207,7 +242,7 @@ struct AddHabitView: View {
                         }
                     }
                 }
-                Section("颜色") {
+                Section("Color") {
                     HStack(spacing: 12) {
                         ForEach(colors, id: \.self) { hex in
                             Circle()
@@ -218,19 +253,19 @@ struct AddHabitView: View {
                         }
                     }
                 }
-                Toggle("每周 N 次", isOn: $isWeekly)
+                Toggle("Weekly goal", isOn: $isWeekly)
                 if isWeekly {
-                    Stepper("每周 \(timesPerWeek) 次", value: $timesPerWeek, in: 1...6)
+                    Stepper("\(timesPerWeek) times per week", value: $timesPerWeek, in: 1...6)
                 }
-                Toggle("每日提醒", isOn: $hasReminder)
+                Toggle("Daily reminder", isOn: $hasReminder)
                 if hasReminder {
-                    DatePicker("提醒时间", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                    DatePicker("Reminder time", selection: $reminderTime, displayedComponents: .hourAndMinute)
                 }
             }
-            .navigationTitle("新习惯")
+            .navigationTitle("New Habit")
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button("Save") {
                         // DoD#4：第 4 个习惯触发 paywall（免费版 3 个）
                         let repo = HabitRepository(context: context)
                         if !StoreKitManager.shared.isPro && repo.activeHabits().count >= 3 {
@@ -242,7 +277,7 @@ struct AddHabitView: View {
                     .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button("Cancel") { dismiss() }
                 }
             }
             .sheet(isPresented: $showPaywall) {

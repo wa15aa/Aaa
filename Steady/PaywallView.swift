@@ -13,14 +13,14 @@ struct PaywallView: View {
             // DoD#4：价格在第一屏第一行位置
             Text(store.product?.displayPrice ?? "$12.99")
                 .font(.system(size: 44, weight: .bold))
-            Text("一次买断，终身使用。没有订阅，没有套路。")
+            Text("One purchase. Yours forever.\nNo subscription, no tricks.")
                 .font(.title3)
                 .multilineTextAlignment(.center)
 
             VStack(alignment: .leading, spacing: 10) {
-                feature("无限习惯（免费版 3 个）")
-                feature("iCloud 加密备份，删了重装也不丢")
-                feature("支持独立开发者继续做这个小工具")
+                feature("Unlimited habits (free version: 3)")
+                feature("Encrypted iCloud backup — survives reinstalls")
+                feature("Support an indie maker, not a subscription machine")
             }
             .padding(.vertical)
 
@@ -32,7 +32,7 @@ struct PaywallView: View {
                     }
                 }
             } label: {
-                Text("买断 \(store.product?.displayPrice ?? "$12.99")")
+                Text("Buy once — \(store.product?.displayPrice ?? "$12.99")")
                     .font(.headline)
                     .frame(maxWidth: .infinity)
                     .padding()
@@ -41,12 +41,12 @@ struct PaywallView: View {
                     .cornerRadius(12)
             }
 
-            Button("恢复购买") {
+            Button("Restore purchase") {
                 Task { await store.restore() }
             }
             .font(.footnote)
 
-            Button("先不用") { dismiss() }
+            Button("Not now") { dismiss() }
                 .font(.footnote)
                 .foregroundColor(.secondary)
             Spacer()

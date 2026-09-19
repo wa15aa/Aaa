@@ -27,9 +27,9 @@ struct SteadyApp: App {
         let created = StreakEngine.addDays(today, -21).raw
         let specs: [(String, String, String, Frequency, [Int])] = [
             // 冥想今天故意不打卡（截图像真实使用中的 2/3 状态）
-            ("冥想 10 分钟", "brain.head.profile", "4F8CFF", .daily, Array(1...13).filter { $0 != 5 }),
-            ("跑步", "figure.run", "FF6B6B", .timesPerWeek(3), [0, 1, 3, 7, 8, 10, 14, 15]),
-            ("读书 20 页", "book.fill", "34C759", .daily, Array(0...20).filter { $0 != 9 }),
+            ("Meditate 10 min", "brain.head.profile", "4F8CFF", .daily, Array(1...13).filter { $0 != 5 }),
+            ("Run", "figure.run", "FF6B6B", .timesPerWeek(3), [0, 1, 3, 7, 8, 10, 14, 15]),
+            ("Read 20 pages", "book.fill", "34C759", .daily, Array(0...20).filter { $0 != 9 }),
         ]
         for (name, icon, color, freq, doneDays) in specs {
             let h = repo.createHabit(name: name, icon: icon, colorHex: color, frequency: freq)

@@ -19,7 +19,7 @@ enum NotificationManager {
 
         let content = UNMutableNotificationContent()
         content.title = name
-        content.body = "还亮着，点一下就好"
+        content.body = "Still open — one tap to check in. Missing one day is fine."
         content.sound = .default
 
         var comps = DateComponents()
