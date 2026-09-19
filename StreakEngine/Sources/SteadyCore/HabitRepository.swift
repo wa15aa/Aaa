@@ -97,6 +97,34 @@ public final class HabitRepository {
         save()
     }
 
+    /// 恢复归档（W7 设置页归档列表）
+    public func unarchive(_ habit: HabitEntity) {
+        habit.archivedAt = nil
+        save()
+    }
+
+    /// 硬删：习惯+全部打卡一并删除（设置页"删除"二次确认后调用）
+    public func deletePermanently(_ habit: HabitEntity) {
+        let req = NSFetchRequest<CheckinEntity>(entityName: "Checkin")
+        req.predicate = NSPredicate(format: "habitId == %@", habit.id as CVarArg)
+        for c in ((try? context.fetch(req)) ?? []) { context.delete(c) }
+        context.delete(habit)
+        save()
+    }
+
+    public func archivedHabits() -> [HabitEntity] {
+        let req = NSFetchRequest<HabitEntity>(entityName: "Habit")
+        req.predicate = NSPredicate(format: "archivedAt != nil")
+        req.sortDescriptors = [NSSortDescriptor(key: "archivedAt", ascending: false)]
+        return (try? context.fetch(req)) ?? []
+    }
+
+    /// 拖拽排序持久化：按传入顺序回写 sortOrder
+    public func reorder(_ habits: [HabitEntity]) {
+        for (i, h) in habits.enumerated() { h.sortOrder = Int16(i) }
+        save()
+    }
+
     public func activeHabits() -> [HabitEntity] {
         let req = NSFetchRequest<HabitEntity>(entityName: "Habit")
         req.predicate = NSPredicate(format: "archivedAt == nil")

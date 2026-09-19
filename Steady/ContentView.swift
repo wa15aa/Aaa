@@ -15,6 +15,7 @@ struct ContentView: View {
     @State private var autoShowDetail = false
     @State private var autoShowPaywall = false
     @State private var showStatsPaywall = false
+    @State private var showSettings = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -28,6 +29,13 @@ struct ContentView: View {
                         Section {
                             ForEach(habits, id: \.id) { habit in
                                 habitRow(habit)
+                            }
+                            .onMove { from, to in
+                                // W7 设置批：拖拽排序持久化到 sortOrder
+                                var copy = habits
+                                copy.move(fromOffsets: from, toOffset: to)
+                                repo.reorder(copy)
+                                habits = copy
                             }
                         } header: {
                             Text("\(checkedToday.count) of \(habits.count) done today")
@@ -48,7 +56,18 @@ struct ContentView: View {
             }
             .navigationTitle("Today")
             .toolbar {
-                Button { showAdd = true } label: { Image(systemName: "plus") }
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    HStack {
+                        EditButton()
+                        Button { showAdd = true } label: { Image(systemName: "plus") }
+                    }
+                }
+            }
+            .sheet(isPresented: $showSettings, onDismiss: reload) {
+                SettingsView().environment(\.managedObjectContext, context)
             }
             .sheet(isPresented: $showAdd, onDismiss: reload) {
                 AddHabitView().environment(\.managedObjectContext, context)
@@ -203,6 +222,8 @@ struct ContentView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowPaywall = true }
         case "add":
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { showAdd = true }
+        case "settings":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { showSettings = true }
         default:
             break
         }
