@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var weeklyProgress: [UUID: Int] = [:]
     @State private var showAdd = false
     @State private var autoShowDetail = false
+    @State private var autoShowPaywall = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -47,6 +48,9 @@ struct ContentView: View {
             }
             .sheet(isPresented: $showAdd, onDismiss: reload) {
                 AddHabitView().environment(\.managedObjectContext, context)
+            }
+            .sheet(isPresented: $autoShowPaywall) {
+                PaywallView(onUnlocked: { autoShowPaywall = false })
             }
             .onAppear(perform: reload)
         }
@@ -132,9 +136,14 @@ struct ContentView: View {
             }
         }
         #if DEBUG
-        // 截图管线：defaults write sh.steadyhabit.Steady screenshotMode detail
-        if UserDefaults.standard.string(forKey: "screenshotMode") == "detail", !habits.isEmpty {
+        // 截图管线：defaults write sh.steadyhabit.Steady screenshotMode detail|paywall
+        switch UserDefaults.standard.string(forKey: "screenshotMode") {
+        case "detail" where !habits.isEmpty:
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowDetail = true }
+        case "paywall":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowPaywall = true }
+        default:
+            break
         }
         #endif
     }
