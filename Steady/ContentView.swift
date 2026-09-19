@@ -7,39 +7,28 @@ struct ContentView: View {
     @State private var habits: [HabitEntity] = []
     @State private var streaks: [UUID: Int] = [:]
     @State private var checkedToday: Set<UUID> = []
+    @State private var weeklyProgress: [UUID: Int] = [:]
     @State private var showAdd = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
     var body: some View {
         NavigationView {
-            List {
-                ForEach(habits, id: \.id) { habit in
-                    HStack {
-                        NavigationLink {
-                            HabitDetailView(habit: habit, repo: repo)
-                        } label: {
-                            HStack {
-                                Image(systemName: habit.icon)
-                                    .foregroundColor(Color(hex: habit.colorHex))
-                                VStack(alignment: .leading) {
-                                    Text(habit.name)
-                                    Text("连续 \(streaks[habit.id] ?? 0) 天")
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
+            Group {
+                if habits.isEmpty {
+                    emptyState
+                } else {
+                    List {
+                        Section {
+                            ForEach(habits, id: \.id) { habit in
+                                habitRow(habit)
                             }
+                        } header: {
+                            Text("今天已完成 \(checkedToday.count)/\(habits.count)")
+                                .textCase(nil)
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
                         }
-                        Spacer()
-                        Button {
-                            repo.checkin(habitId: habit.id)
-                            reload()
-                        } label: {
-                            Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
-                                .font(.title2)
-                        }
-                        .buttonStyle(.plain)
-                        .disabled(checkedToday.contains(habit.id))
                     }
                 }
             }
@@ -54,15 +43,83 @@ struct ContentView: View {
         }
     }
 
+    /// 空态：新用户引导（MVP_SPEC §1 首屏 ≤1 点击创建）
+    private var emptyState: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "checkmark.circle")
+                .font(.system(size: 56))
+                .foregroundColor(.accentColor)
+            Text("还没有习惯")
+                .font(.title2).bold()
+            Text("从一个最小行动开始，\n断一天没关系，别断两天。")
+                .multilineTextAlignment(.center)
+                .foregroundColor(.secondary)
+            Button("创建第一个习惯") { showAdd = true }
+                .buttonStyle(.borderedProminent)
+                .padding(.top, 8)
+        }
+        .padding()
+    }
+
+    private func habitRow(_ habit: HabitEntity) -> some View {
+        HStack {
+            NavigationLink {
+                HabitDetailView(habit: habit, repo: repo)
+            } label: {
+                HStack {
+                    Image(systemName: habit.icon)
+                        .foregroundColor(Color(hex: habit.colorHex))
+                    VStack(alignment: .leading) {
+                        Text(habit.name)
+                        Text(subtitle(for: habit))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            Spacer()
+            Button {
+                let generator = UIImpactFeedbackGenerator(style: .medium)
+                generator.prepare()
+                if repo.checkin(habitId: habit.id) {
+                    generator.impactOccurred()
+                }
+                reload()
+            } label: {
+                Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
+                    .font(.title2)
+                    .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+            }
+            .buttonStyle(.plain)
+            .disabled(checkedToday.contains(habit.id))
+        }
+    }
+
+    /// daily → "连续 X 天"；weekly → "本周 x/N · 连续 w 周"
+    private func subtitle(for habit: HabitEntity) -> String {
+        let streak = streaks[habit.id] ?? 0
+        if habit.frequencyKind == "weekly" {
+            let done = weeklyProgress[habit.id] ?? 0
+            return "本周 \(done)/\(habit.timesPerWeek) · 连续 \(streak) 周"
+        }
+        return "连续 \(streak) 天"
+    }
+
     private func reload() {
         habits = repo.activeHabits()
-        let today = HabitRepository.todayKey()
+        let today = DayKey(HabitRepository.todayKey())
+        let weekStart = StreakEngine.weekStart(today)
         streaks = [:]
         checkedToday = []
+        weeklyProgress = [:]
         for h in habits {
             streaks[h.id] = repo.streakState(for: h).current
-            if repo.fetchCheckin(habitId: h.id, day: today) != nil {
+            let checkins = repo.allCheckins(habitId: h.id)
+            if checkins.contains(where: { $0.day == today.raw }) {
                 checkedToday.insert(h.id)
+            }
+            if h.frequencyKind == "weekly" {
+                weeklyProgress[h.id] = checkins.filter { $0.day >= weekStart.raw && $0.day <= today.raw }.count
             }
         }
     }
