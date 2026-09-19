@@ -62,6 +62,14 @@ Initial release: elastic streaks that survive a missed day, quit-habit tracking 
 ## ASO 依据（2026-09-18 sage 卡 aso-keyword-strategy-habit 采纳）
 - 关键词前置标题 + 副标题卖点词；"habit tracker" 难度 64 走长尾，差异化词（never miss twice / streak recovery 语义）意图精准
 - 本地化倍增：上架时加 Spanish (MX) locale 吃美区额外 100 字符关键词位（无需真翻译）
+
+## es-MX（关键词位倍增用，2026-09-19 备）
+
+**Name**: Habit Tracker - Steady（同 en-US，品牌词不动）
+**Subtitle**: Never miss twice, streaks live（同上）
+**Keywords (es-MX 专属 100 字符，与 en-US 不重复即可各算各的)**:
+habitos,diario,racha,recordatorio,meta,seguimiento,constancia,widget,gratis,salud,productividad
+**说明**：es-MX 的 name/subtitle/keywords 会参与美区搜索；description 可留英文（ASO 惯例），上架时若时间充裕再翻。
 - [verify 2027-01-15] 预测：主词 4 周进不了前 50，长尾应进前 20；全灭则投 ASA 验证词包
 - [候选 2026-09-19] sage YouTube 语料：ADHD 人群是 habit tracker 蓝海——W8 前关键词迭代时评估 "adhd" 进 100 字符位（换哪个词出去到时再定）；Quit 卖点不进获客第一层文案，但 replan-v2 §6 允许长尾关键词位收 quit smoking tracker / streak recovery / no subscription（W8 一并评估）
 
