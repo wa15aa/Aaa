@@ -19,6 +19,7 @@ targets:
       configs:
         Debug:
           ONLY_ACTIVE_ARCH: YES
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
     dependencies:
       - package: StreakEngine
         product: SteadyCore
