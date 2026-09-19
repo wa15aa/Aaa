@@ -27,8 +27,12 @@ targets:
       path: Steady/Info.plist
       properties:
         UILaunchScreen_Generation: YES
+        # 空 dict 启用全屏启动（修 letterbox 黑边）；必须在这里声明，xcodegen 重生成 Info.plist 才不会丢
+        UILaunchScreen: {}
         UISupportedInterfaceOrientations: [UIInterfaceOrientationPortrait]
         CFBundleDisplayName: Steady
+        # 仅用 Apple 系统 CryptoKit 加密备份 → 免出口合规自证
+        ITSAppUsesNonExemptEncryption: NO
   SteadyTests:
     type: bundle.unit-test
     platform: iOS
