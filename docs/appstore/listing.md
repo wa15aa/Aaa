@@ -59,6 +59,7 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 - 关键词前置标题 + 副标题卖点词；"habit tracker" 难度 64 走长尾，差异化词（never miss twice / streak recovery 语义）意图精准
 - 本地化倍增：上架时加 Spanish (MX) locale 吃美区额外 100 字符关键词位（无需真翻译）
 - [verify 2027-01-15] 预测：主词 4 周进不了前 50，长尾应进前 20；全灭则投 ASA 验证词包
+- [候选 2026-09-19] sage YouTube 语料：ADHD 人群是 habit tracker 蓝海——W8 前关键词迭代时评估 "adhd" 进 100 字符位（换哪个词出去到时再定）；Quit 卖点不进获客层（HabitKit 已上+语料零声量）
 
 ## Spanish (MX) locale 关键词位（本地化倍增，美区额外 100 字符）
 - Name/Subtitle 直接复用 en-US（无需真翻译）
