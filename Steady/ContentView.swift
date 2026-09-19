@@ -42,7 +42,10 @@ struct ContentView: View {
                                 habits = copy
                             }
                         } header: {
-                            Text("\(checkedToday.count) of \(habits.count) done today")
+                            // quit 型默认"已守住"，不计入待完成数；破戒标记也不是 done
+                            let buildHabits = habits.filter { $0.habitType != "quit" }
+                            let buildDone = buildHabits.filter { checkedToday.contains($0.id) }.count
+                            Text("\(buildDone) of \(buildHabits.count) done today")
                                 .textCase(nil)
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
@@ -123,20 +126,36 @@ struct ContentView: View {
                     .buttonStyle(.plain)
             }
             Spacer()
-            Button {
-                let generator = UIImpactFeedbackGenerator(style: .medium)
-                generator.prepare()
-                if repo.checkin(habitId: habit.id) {
-                    generator.impactOccurred()
+            if habit.habitType == "quit" {
+                // Quit 型默认今天已守住：不显示打卡钮，只给"标破戒"钮（再点一次=误标撤销）
+                let slipped = checkedToday.contains(habit.id)
+                Button {
+                    if slipped { _ = repo.removeCheckin(habitId: habit.id, day: HabitRepository.todayKey()) }
+                    else { _ = repo.checkin(habitId: habit.id) }
+                    reload()
+                } label: {
+                    Image(systemName: slipped ? "bandage.fill" : "bandage")
+                        .font(.system(size: 22))
+                        .foregroundColor(slipped ? .orange : Color(.systemGray3))
                 }
-                reload()
-            } label: {
-                Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
-                    .font(.system(size: 26))
-                    .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+                .buttonStyle(.plain)
+                .accessibilityLabel(slipped ? "Undo slip" : "Mark slip")
+            } else {
+                Button {
+                    let generator = UIImpactFeedbackGenerator(style: .medium)
+                    generator.prepare()
+                    if repo.checkin(habitId: habit.id) {
+                        generator.impactOccurred()
+                    }
+                    reload()
+                } label: {
+                    Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
+                        .font(.system(size: 26))
+                        .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+                }
+                .buttonStyle(.plain)
+                .disabled(checkedToday.contains(habit.id))
             }
-            .buttonStyle(.plain)
-            .disabled(checkedToday.contains(habit.id))
         }
     }
 
@@ -150,15 +169,28 @@ struct ContentView: View {
             Text("\(streaks[habit.id] ?? 0)d")
                 .font(.caption).foregroundColor(.secondary)
             Spacer()
-            Button {
-                if repo.checkin(habitId: habit.id) { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
-                reload()
-            } label: {
-                Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+            if habit.habitType == "quit" {
+                let slipped = checkedToday.contains(habit.id)
+                Button {
+                    if slipped { _ = repo.removeCheckin(habitId: habit.id, day: HabitRepository.todayKey()) }
+                    else { _ = repo.checkin(habitId: habit.id) }
+                    reload()
+                } label: {
+                    Image(systemName: slipped ? "bandage.fill" : "bandage")
+                        .foregroundColor(slipped ? .orange : Color(.systemGray3))
+                }
+                .buttonStyle(.plain)
+            } else {
+                Button {
+                    if repo.checkin(habitId: habit.id) { UIImpactFeedbackGenerator(style: .medium).impactOccurred() }
+                    reload()
+                } label: {
+                    Image(systemName: checkedToday.contains(habit.id) ? "checkmark.circle.fill" : "circle")
+                        .foregroundColor(checkedToday.contains(habit.id) ? Color(hex: habit.colorHex) : Color(.systemGray3))
+                }
+                .buttonStyle(.plain)
+                .disabled(checkedToday.contains(habit.id))
             }
-            .buttonStyle(.plain)
-            .disabled(checkedToday.contains(habit.id))
         }
     }
 
@@ -269,6 +301,10 @@ struct ContentView: View {
         if habit.frequencyKind == "weekly" {
             let done = weeklyProgress[habit.id] ?? 0
             return "This week \(done)/\(habit.timesPerWeek) · \(streak)-week streak"
+        }
+        // quit 型：streak = 连续守住天数，措辞点明语义
+        if habit.habitType == "quit" {
+            return streak > 0 ? "\(streak)-day clean streak" : "Clean today counts — only mark slips"
         }
         return "\(streak)-day streak"
     }
