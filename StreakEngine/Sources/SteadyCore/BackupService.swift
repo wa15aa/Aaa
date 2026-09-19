@@ -16,6 +16,8 @@ public final class BackupService {
         public var colorHex: String; public var frequencyKind: String
         public var timesPerWeek: Int16
         public var reminderHour: Int16?; public var reminderMinute: Int16?
+        public var reminder2Hour: Int16?; public var reminder2Minute: Int16?
+        public var reminder3Hour: Int16?; public var reminder3Minute: Int16?
         public var createdAt: Date; public var createdDay: String
         public var sortOrder: Int16; public var archivedAt: Date?
     }
@@ -48,6 +50,10 @@ public final class BackupService {
                          frequencyKind: $0.frequencyKind, timesPerWeek: $0.timesPerWeek,
                          reminderHour: $0.reminderHour >= 0 ? $0.reminderHour : nil,
                          reminderMinute: $0.reminderHour >= 0 ? $0.reminderMinute : nil,
+                         reminder2Hour: $0.reminder2Hour >= 0 ? $0.reminder2Hour : nil,
+                         reminder2Minute: $0.reminder2Hour >= 0 ? $0.reminder2Minute : nil,
+                         reminder3Hour: $0.reminder3Hour >= 0 ? $0.reminder3Hour : nil,
+                         reminder3Minute: $0.reminder3Hour >= 0 ? $0.reminder3Minute : nil,
                          createdAt: $0.createdAt, createdDay: $0.createdDay,
                          sortOrder: $0.sortOrder, archivedAt: $0.archivedAt)
             },
@@ -79,6 +85,8 @@ public final class BackupService {
             h.id = dto.id; h.name = dto.name; h.icon = dto.icon; h.colorHex = dto.colorHex
             h.frequencyKind = dto.frequencyKind; h.timesPerWeek = dto.timesPerWeek
             h.reminderHour = dto.reminderHour ?? -1; h.reminderMinute = dto.reminderMinute ?? -1
+            h.reminder2Hour = dto.reminder2Hour ?? -1; h.reminder2Minute = dto.reminder2Minute ?? -1
+            h.reminder3Hour = dto.reminder3Hour ?? -1; h.reminder3Minute = dto.reminder3Minute ?? -1
             h.createdAt = dto.createdAt; h.createdDay = dto.createdDay
             h.sortOrder = dto.sortOrder; h.archivedAt = dto.archivedAt
             addedHabits += 1

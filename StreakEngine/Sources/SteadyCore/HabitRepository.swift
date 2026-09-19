@@ -46,17 +46,48 @@ public final class HabitRepository {
         h.sortOrder = sortOrder
         // -1 = 未设提醒（0:00 是合法提醒时间，不能用 0 当哨兵）
         h.reminderHour = -1; h.reminderMinute = -1
+        h.reminder2Hour = -1; h.reminder2Minute = -1
+        h.reminder3Hour = -1; h.reminder3Minute = -1
         save()
         return h
     }
 
     /// 设置/清除每日提醒时间。hour 传 nil 表示清除。
     public func setReminder(habit: HabitEntity, hour: Int?, minute: Int?) {
-        if let hour = hour, let minute = minute, (0...23).contains(hour), (0...59).contains(minute) {
-            habit.reminderHour = Int16(hour); habit.reminderMinute = Int16(minute)
+        if let hour = hour, let minute = minute {
+            setReminders(habit: habit, times: [(hour, minute)])
         } else {
-            habit.reminderHour = -1; habit.reminderMinute = -1
+            setReminders(habit: habit, times: [])
         }
+    }
+
+    /// 全部提醒时间（已排序、去重、≤3 条）。
+    public func reminders(of habit: HabitEntity) -> [(hour: Int, minute: Int)] {
+        var out: [(Int, Int)] = []
+        for (h, m) in [(habit.reminderHour, habit.reminderMinute),
+                       (habit.reminder2Hour, habit.reminder2Minute),
+                       (habit.reminder3Hour, habit.reminder3Minute)] where h >= 0 {
+            out.append((Int(h), Int(m)))
+        }
+        return out
+    }
+
+    /// 批量设置提醒（W6 功能批②，上限 3 条；越界/非法值丢弃）。
+    public func setReminders(habit: HabitEntity, times: [(hour: Int, minute: Int)]) {
+        let clean = times.filter { (0...23).contains($0.hour) && (0...59).contains($0.minute) }
+        var uniq: [(Int, Int)] = []
+        for t in clean where !uniq.contains(where: { $0 == (t.hour, t.minute) }) {
+            uniq.append((t.hour, t.minute))
+        }
+        let slots = Array(uniq.prefix(3))
+        let pairs: [(Int16, Int16)] = [
+            (Int16(slots.count > 0 ? slots[0].0 : -1), Int16(slots.count > 0 ? slots[0].1 : -1)),
+            (Int16(slots.count > 1 ? slots[1].0 : -1), Int16(slots.count > 1 ? slots[1].1 : -1)),
+            (Int16(slots.count > 2 ? slots[2].0 : -1), Int16(slots.count > 2 ? slots[2].1 : -1)),
+        ]
+        habit.reminderHour = pairs[0].0; habit.reminderMinute = pairs[0].1
+        habit.reminder2Hour = pairs[1].0; habit.reminder2Minute = pairs[1].1
+        habit.reminder3Hour = pairs[2].0; habit.reminder3Minute = pairs[2].1
         save()
     }
 

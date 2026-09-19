@@ -214,20 +214,26 @@ struct AddHabitView: View {
     @State private var name = ""
     @State private var isWeekly = false
     @State private var timesPerWeek = 3
-    @State private var hasReminder = false
-    @State private var reminderTime = Calendar.current.date(from: DateComponents(hour: 9, minute: 0)) ?? Date()
+    @State private var reminderTimes: [Date] = []
+    private let defaultReminderTime = Calendar.current.date(from: DateComponents(hour: 9, minute: 0)) ?? Date()
     @State private var showPaywall = false
     @State private var habitType: HabitType = .build
     @State private var showQuitPaywall = false
     @State private var icon = "star.fill"
     @State private var colorHex = "4F8CFF"
 
-    // MVP_SPEC §4：icon enum 32 个的可用子集（SF Symbols，v1 先 24 个常用）
+    // W6 功能批①：40 SF Symbols 图标 + 21 色色板（对齐 HabitKit 选择器容量）
     private let icons = ["star.fill", "heart.fill", "flame.fill", "book.fill", "figure.run", "drop.fill",
                          "leaf.fill", "moon.fill", "sun.max.fill", "pencil", "paintbrush.fill", "music.note",
                          "dumbbell.fill", "bicycle", "fork.knife", "cup.and.saucer.fill", "bed.double.fill", "brain.head.profile",
-                         "text.book.closed.fill", "laptopcomputer", "camera.fill", "gamecontroller.fill", "cart.fill", "phone.fill"]
-    private let colors = ["4F8CFF", "FF6B6B", "34C759", "FF9500", "AF52DE", "00C7BE", "FFD60A", "FF375F"]
+                         "text.book.closed.fill", "laptopcomputer", "camera.fill", "gamecontroller.fill", "cart.fill", "phone.fill",
+                         "figure.walk", "figure.yoga", "sportscourt.fill", "trophy.fill",
+                         "pills.fill", "stethoscope", "bandage.fill", "waterbottle.fill",
+                         "graduationcap.fill", "globe", "airplane", "car.fill",
+                         "house.fill", "briefcase.fill", "gift.fill", "pawprint.fill"]
+    private let colors = ["4F8CFF", "FF6B6B", "34C759", "FF9500", "AF52DE", "00C7BE", "FFD60A", "FF375F",
+                          "5E5CE6", "64D2FF", "30D158", "FF9F0A", "BF5AF2", "6AC4DC", "FF6482", "AC8E68",
+                          "2E7D5B", "0A5CFF", "D70015", "8E8E93", "1C1C1E"]
 
     private func save() {
         let repo = HabitRepository(context: context)
@@ -235,13 +241,15 @@ struct AddHabitView: View {
             name: name, icon: icon, colorHex: colorHex,
             frequency: isWeekly ? .timesPerWeek(timesPerWeek) : .daily,
             type: habitType)
-        if hasReminder {
+        if !reminderTimes.isEmpty {
             NotificationManager.requestAuthorization()
-            let comps = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
             // 先落库（备份会带走），再调度本地通知
-            repo.setReminder(habit: habit, hour: comps.hour, minute: comps.minute)
-            NotificationManager.scheduleReminder(habitId: habit.id, name: habit.name,
-                                                 hour: comps.hour, minute: comps.minute)
+            let times: [(hour: Int, minute: Int)] = reminderTimes.map {
+                let comps = Calendar.current.dateComponents([.hour, .minute], from: $0)
+                return (comps.hour ?? 9, comps.minute ?? 0)
+            }
+            repo.setReminders(habit: habit, times: times)
+            NotificationManager.scheduleReminders(habitId: habit.id, name: habit.name, times: times)
         }
         dismiss()
     }
@@ -297,9 +305,25 @@ struct AddHabitView: View {
                             .foregroundColor(.secondary)
                     }
                 }
-                Toggle("Daily reminder", isOn: $hasReminder)
-                if hasReminder {
-                    DatePicker("Reminder time", selection: $reminderTime, displayedComponents: .hourAndMinute)
+                Section("Reminders") {
+                    // W6 功能批②：每习惯多提醒，上限 3 条（对齐 HabitKit）
+                    ForEach(Array(reminderTimes.indices), id: \.self) { i in
+                        HStack {
+                            DatePicker("Reminder \(i + 1)", selection: $reminderTimes[i],
+                                       displayedComponents: .hourAndMinute)
+                            Button(role: .destructive) { reminderTimes.remove(at: i) } label: {
+                                Image(systemName: "minus.circle.fill")
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    if reminderTimes.count < 3 {
+                        Button {
+                            reminderTimes.append(defaultReminderTime)
+                        } label: {
+                            Label("Add reminder", systemImage: "plus.circle")
+                        }
+                    }
                 }
             }
             .navigationTitle("New Habit")

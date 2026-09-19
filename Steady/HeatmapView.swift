@@ -1,4 +1,5 @@
 import SwiftUI
+import Charts
 import SteadyCore
 import StreakEngine
 
@@ -162,6 +163,7 @@ struct HabitDetailView: View {
                 Text("\(day.raw)：\(label(for: st))")
                     .font(.callout).foregroundColor(.secondary)
             }
+            chartSection
             Spacer()
         }
         .padding()
@@ -220,6 +222,77 @@ struct HabitDetailView: View {
             }
             .buttonStyle(.plain)
             .disabled(todayMarked)
+        }
+    }
+
+    // MARK: W6 功能批③ 统计图表化（Swift Charts，对齐 HabitKit 05 页）
+
+    /// 周维度完成率：最近 8 周，每周达标天数（daily/quit=完成天数，weekly=当周打卡数）
+    private var weeklyBuckets: [(label: String, value: Int)] {
+        let todayKey = DayKey(today)
+        let thisWeek = StreakEngine.weekStart(todayKey)
+        return (0..<8).reversed().map { back in
+            let ws = StreakEngine.addDays(thisWeek, -7 * back)
+            let days = (0..<7).map { StreakEngine.addDays(ws, $0) }.filter { $0 <= todayKey }
+            if isQuit {
+                let slips = days.filter { checkinSet.contains($0) }.count
+                return ("W\(back == 0 ? " now" : "-\(back)")", max(0, days.count - slips))
+            }
+            let done = days.filter { checkinSet.contains($0) }.count
+            return ("W\(back == 0 ? " now" : "-\(back)")", done)
+        }
+    }
+
+    /// 月维度完成率（%）：最近 6 个月
+    private var monthlyBuckets: [(label: String, value: Int)] {
+        let todayKey = DayKey(today)
+        let created = DayKey(habit.createdDay)
+        let ym = { (d: DayKey) -> String in String(d.raw.prefix(7)) }
+        var months: [String] = []
+        var cursor = DayKey(ym(created) + "-01")
+        while cursor <= todayKey {
+            months.append(ym(cursor))
+            cursor = StreakEngine.addDays(cursor, 32)
+            cursor = DayKey(ym(cursor) + "-01")
+        }
+        return months.suffix(6).map { m in
+            let days = checkinSet.filter { $0.raw.hasPrefix(m) }
+            // 月内总天数近似：该月打卡/破戒计数 ÷ 当月已过天数
+            let firstOfMonth = DayKey(m + "-01")
+            var last = StreakEngine.addDays(firstOfMonth, 32)
+            last = DayKey(ym(last) + "-01")
+            var total = 0; var d = firstOfMonth
+            let end = min(last, StreakEngine.addDays(todayKey, 1))
+            while d < end { if d >= created { total += 1 }; d = StreakEngine.addDays(d, 1) }
+            guard total > 0 else { return (String(m.suffix(2)), 0) }
+            let pct = isQuit ? max(0, (total - days.count)) * 100 / total : days.count * 100 / total
+            return (String(m.suffix(2)), pct)
+        }
+    }
+
+    @State private var chartRange = 0 // 0=周 1=月
+
+    private var chartSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Picker("Range", selection: $chartRange) {
+                Text("Weeks").tag(0)
+                Text("Months").tag(1)
+            }
+            .pickerStyle(.segmented)
+            if chartRange == 0 {
+                Chart(weeklyBuckets, id: \.label) { b in
+                    BarMark(x: .value("Week", b.label), y: .value(isQuit ? "Clean" : "Done", b.value))
+                        .foregroundStyle(accent)
+                }
+                .frame(height: 140)
+            } else {
+                Chart(monthlyBuckets, id: \.label) { b in
+                    BarMark(x: .value("Month", b.label), y: .value("Rate %", b.value))
+                        .foregroundStyle(accent)
+                }
+                .chartYScale(domain: 0...100)
+                .frame(height: 140)
+            }
         }
     }
 

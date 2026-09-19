@@ -45,6 +45,10 @@ public final class PersistenceController {
             ("timesPerWeek", .integer16AttributeType, false), // weekly 时 1...6
             ("reminderHour", .integer16AttributeType, true),
             ("reminderMinute", .integer16AttributeType, true),
+            ("reminder2Hour", .integer16AttributeType, true),   // W6 功能批②：每习惯多提醒（≤3）
+            ("reminder2Minute", .integer16AttributeType, true),
+            ("reminder3Hour", .integer16AttributeType, true),
+            ("reminder3Minute", .integer16AttributeType, true),
             ("createdAt", .dateAttributeType, false),
             ("createdDay", .stringAttributeType, false),      // yyyy-MM-dd 本地
             ("sortOrder", .integer16AttributeType, false),
@@ -53,6 +57,10 @@ public final class PersistenceController {
         habit.properties = habitAttrs.map { makeAttr($0.0, $0.1, optional: $0.2) }
         // 存量数据迁移：habitType 默认 "build"（新增属性带默认值 → 轻量迁移安全）
         (habit.properties.first { $0.name == "habitType" } as? NSAttributeDescription)?.defaultValue = "build"
+        // 新增多提醒字段默认 -1（未设）；optional Int16 缺失值读出为 0 会误判成 0:00 提醒
+        for n in ["reminder2Hour", "reminder2Minute", "reminder3Hour", "reminder3Minute"] {
+            (habit.properties.first { $0.name == n } as? NSAttributeDescription)?.defaultValue = -1
+        }
 
         // MARK: Checkin
         let checkin = NSEntityDescription()
@@ -119,6 +127,10 @@ public final class HabitEntity: NSManagedObject {
     @NSManaged public var timesPerWeek: Int16
     @NSManaged public var reminderHour: Int16
     @NSManaged public var reminderMinute: Int16
+    @NSManaged public var reminder2Hour: Int16
+    @NSManaged public var reminder2Minute: Int16
+    @NSManaged public var reminder3Hour: Int16
+    @NSManaged public var reminder3Minute: Int16
     @NSManaged public var createdAt: Date
     @NSManaged public var createdDay: String
     @NSManaged public var sortOrder: Int16
