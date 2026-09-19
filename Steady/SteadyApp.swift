@@ -38,6 +38,13 @@ struct SteadyApp: App {
                 _ = repo.checkin(habitId: h.id, day: StreakEngine.addDays(today, -off).raw)
             }
         }
+        // screenshotMode=quit：追加一个 quit 型种子（"No sugar"，两天前破戒一次）截 quit 行引导
+        if UserDefaults.standard.string(forKey: "screenshotMode") == "quit" {
+            let q = repo.createHabit(name: "No sugar", icon: "bandage.fill", colorHex: "FF9F0A",
+                                     frequency: .daily, type: .quit)
+            q.createdDay = created
+            _ = repo.checkin(habitId: q.id, day: StreakEngine.addDays(today, -2).raw)
+        }
         try? context.save()
     }
     #endif
