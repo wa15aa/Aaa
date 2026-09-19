@@ -201,6 +201,8 @@ struct ContentView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowDetail = true }
         case "paywall":
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { autoShowPaywall = true }
+        case "add":
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { showAdd = true }
         default:
             break
         }
@@ -271,7 +273,7 @@ struct AddHabitView: View {
                     }
                 }
                 Section("Color") {
-                    HStack(spacing: 12) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 7), spacing: 12) {
                         ForEach(colors, id: \.self) { hex in
                             Circle()
                                 .fill(Color(hex: hex))
