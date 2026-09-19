@@ -91,5 +91,42 @@ check(StreakEngine.dayState(day: DayKey("2025-12-31"), checkins: done, createdDa
 s = StreakEngine.daily(checkins: c(["2026-01-01","2026-01-02","2026-01-06","2026-01-07","2026-01-08","2026-01-09"]), createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-09"))
 check(s.current == 4 && s.best == 4 && s.segments.count == 1 && s.segments[0].length == 2, "20_secondSegmentBeatsBest", "\(s)")
 
+// ===== quit 型（replan-v2 §4.1：默认完成只标破戒天，never-slip-twice 与 build 对称）=====
+
+// 21 零破戒：每天都是完成天
+s = StreakEngine.quitDaily(slips: [], createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-03"))
+check(s.current == 3 && s.best == 3 && s.segments.isEmpty && s.todayState == .done, "21_quitNoSlips", "\(s)")
+
+// 22 孤立破戒 1 天：暗格不清零，current 只计无破戒天
+s = StreakEngine.quitDaily(slips: c(["2026-01-02"]), createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-04"))
+check(s.current == 3 && s.segments.isEmpty, "22_quitOneSlip_keepsStreak", "\(s)")
+
+// 23 连续破戒 2 天：封存段，current 重新起算
+s = StreakEngine.quitDaily(slips: c(["2026-01-03","2026-01-04"]), createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-05"))
+check(s.current == 1 && s.best == 2 && s.segments.count == 1 && s.segments[0].length == 2, "23_quitTwoSlips_seals", "\(s)")
+
+// 24 今天破戒（首次孤立）：streak 仍活，今天暗格
+s = StreakEngine.quitDaily(slips: c(["2026-01-04"]), createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-04"))
+check(s.current == 3 && s.todayState == .dimmed && s.segments.isEmpty, "24_quitSlipToday_dimmed", "\(s)")
+
+// 25 创建当天零破戒：current=1（无破戒天即计数，与 build 的"没打卡=0"不对称是有意的）
+s = StreakEngine.quitDaily(slips: [], createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-01"))
+check(s.current == 1 && s.todayState == .done, "25_quitCreatedToday_counts", "\(s)")
+
+// 26 创建前的破戒记录忽略（输入层脏数据防御）
+s = StreakEngine.quitDaily(slips: c(["2025-12-31"]), createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-02"))
+check(s.current == 2 && s.segments.isEmpty, "26_quitSlipBeforeCreation_ignored", "\(s)")
+
+// 27 quitDayState 四态（missed = 破戒三连的中段，与 build 的"深缺口"语义镜像）
+let slips: Set<DayKey> = [DayKey("2026-01-03"), DayKey("2026-01-05"), DayKey("2026-01-06"), DayKey("2026-01-07")]
+check(StreakEngine.quitDayState(day: DayKey("2026-01-03"), slips: slips, createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-10")) == .dimmed, "27a_quitSlipIsolated_dimmed")
+check(StreakEngine.quitDayState(day: DayKey("2026-01-06"), slips: slips, createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-10")) == .missed, "27b_quitSlipMiddleOfRun_missed")
+check(StreakEngine.quitDayState(day: DayKey("2026-01-02"), slips: slips, createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-10")) == .done, "27c_quitClean_done")
+check(StreakEngine.quitDayState(day: DayKey("2026-01-11"), slips: slips, createdDay: DayKey("2026-01-01"), today: DayKey("2026-01-10")) == .future, "27d_quitFuture")
+
+// 28 quit 跨月/跨年不破（走 build 同一套 civil-date 内核）
+s = StreakEngine.quitDaily(slips: [], createdDay: DayKey("2025-12-30"), today: DayKey("2026-01-02"))
+check(s.current == 4, "28_quitAcrossYear", "\(s)")
+
 print("\n===== \(passed) passed, \(failed) failed =====")
 if failed > 0 { exit(1) }

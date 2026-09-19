@@ -175,7 +175,7 @@ public final class BackupService {
             try FileManager.default.createDirectory(at: url.deletingLastPathComponent(),
                                                     withIntermediateDirectories: true)
             try cipher.write(to: url, options: .atomic)
-            meta.lastBackupAt = Date()
+            meta.lastBackupAt = HabitRepository.localDayFormatter.date(from: today) ?? Date()
             meta.schemaVersion = schemaVersion
             if context.hasChanges { try context.save() }
             return true

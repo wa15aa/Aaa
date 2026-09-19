@@ -14,6 +14,14 @@ public enum Frequency: Codable, Equatable {
     case timesPerWeek(Int) // 1...6
 }
 
+/// 习惯类型（replan-v2 §4.1，2026-09-19 用户批准）：
+/// - build：每天主动打卡，完成集 = 打卡天
+/// - quit：戒断型，默认完成，只标破戒天，完成集 = 非破戒天；streak 计连续无破戒天
+public enum HabitType: String, Codable, Equatable {
+    case build
+    case quit
+}
+
 public struct CheckinInput: Equatable {
     public let day: DayKey
     public let backfill: Bool
@@ -177,6 +185,34 @@ public enum StreakEngine {
         }
 
         return StreakState(current: current, best: best, segments: segments, todayState: todayState)
+    }
+
+    // MARK: quit（戒断型，daily-only）
+
+    /// 计算 quit 型习惯的 streak 状态。语义与 daily 对称（never-slip-twice）：
+    /// 默认每天都是完成天；破戒 1 天 = 暗格（streak 不清零）；连续破戒 2 天才封存段。
+    /// current 单位 = 当前段内无破戒天数（与 daily 的"段内完成天数"对称）。
+    public static func quitDaily(slips: [CheckinInput], createdDay: DayKey, today: DayKey) -> StreakState {
+        let slipDays = Set(slips.map { $0.day })
+        var done: [CheckinInput] = []
+        var day = createdDay
+        while day <= today {
+            if !slipDays.contains(day) { done.append(CheckinInput(day: day)) }
+            day = addDays(day, 1)
+        }
+        return daily(checkins: done, createdDay: createdDay, today: today)
+    }
+
+    /// 热力图单格状态（quit 型）：非破戒天 = done；孤立破戒天 = dimmed（streak 跨过）；
+    /// 与另一破戒天相邻的破戒天 = missed（该段已断）。
+    public static func quitDayState(day: DayKey, slips: Set<DayKey>, createdDay: DayKey, today: DayKey) -> DayState {
+        if day > today { return .future }
+        if day < createdDay { return .beforeStart }
+        if !slips.contains(day) { return .done }
+        if !slips.contains(addDays(day, -1)) || !slips.contains(addDays(day, 1)) {
+            return .dimmed
+        }
+        return .missed
     }
 
     // MARK: weekly

@@ -24,14 +24,18 @@ public final class HabitRepository {
 
     @discardableResult
     public func createHabit(name: String, icon: String, colorHex: String,
-                     frequency: Frequency, sortOrder: Int16 = 0) -> HabitEntity {
+                     frequency: Frequency, sortOrder: Int16 = 0,
+                     type: HabitType = .build) -> HabitEntity {
         // 用 context 所属 model 解析实体（同进程多 container 时 +entity 全局查找会二义）
         let h = HabitEntity(entity: NSEntityDescription.entity(forEntityName: "Habit", in: context)!, insertInto: context)
         h.id = UUID()
         h.name = String(name.prefix(30))
         h.icon = icon
         h.colorHex = colorHex
-        switch frequency {
+        h.habitType = type.rawValue
+        // quit 型仅支持 daily（破戒按天标记；replan-v2 §4.1 未定义 weekly quit）
+        let effectiveFrequency = type == .quit ? Frequency.daily : frequency
+        switch effectiveFrequency {
         case .daily:
             h.frequencyKind = "daily"; h.timesPerWeek = 0
         case .timesPerWeek(let n):
@@ -72,6 +76,7 @@ public final class HabitRepository {
     // MARK: 打卡
 
     /// 打卡（默认今天）。重复打卡同一天 = 幂等（唯一约束冲突时保留已有记录）。
+    /// quit 型习惯里一条 Checkin 记录 = 一个破戒天（语义由 habitType 解释）。
     @discardableResult
     public func checkin(habitId: UUID, day: String? = nil, backfill: Bool = false) -> Bool {
         let dayKey = day ?? Self.todayKey()
@@ -97,6 +102,15 @@ public final class HabitRepository {
         return try? context.fetch(req).first
     }
 
+    /// 撤销某天的记录（quit 型误标破戒的 undo；build 型暂不对 UI 暴露）
+    @discardableResult
+    public func removeCheckin(habitId: UUID, day: String) -> Bool {
+        guard let c = fetchCheckin(habitId: habitId, day: day) else { return false }
+        context.delete(c)
+        save()
+        return true
+    }
+
     public func allCheckins(habitId: UUID) -> [CheckinEntity] {
         let req = NSFetchRequest<CheckinEntity>(entityName: "Checkin")
         req.predicate = NSPredicate(format: "habitId == %@", habitId as CVarArg)
@@ -112,6 +126,9 @@ public final class HabitRepository {
         }
         let today = DayKey(Self.todayKey())
         let created = DayKey(habit.createdDay)
+        if habit.habitType == HabitType.quit.rawValue {
+            return StreakEngine.quitDaily(slips: inputs, createdDay: created, today: today)
+        }
         if habit.frequencyKind == "weekly" {
             return StreakEngine.weekly(checkins: inputs, targetPerWeek: Int(habit.timesPerWeek),
                                        createdDay: created, today: today)

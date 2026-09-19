@@ -41,6 +41,7 @@ public final class PersistenceController {
             ("icon", .stringAttributeType, false),
             ("colorHex", .stringAttributeType, false),
             ("frequencyKind", .stringAttributeType, false),   // "daily" | "weekly"
+            ("habitType", .stringAttributeType, false),       // "build" | "quit"（轻量迁移靠默认值）
             ("timesPerWeek", .integer16AttributeType, false), // weekly 时 1...6
             ("reminderHour", .integer16AttributeType, true),
             ("reminderMinute", .integer16AttributeType, true),
@@ -50,6 +51,8 @@ public final class PersistenceController {
             ("archivedAt", .dateAttributeType, true),
         ]
         habit.properties = habitAttrs.map { makeAttr($0.0, $0.1, optional: $0.2) }
+        // 存量数据迁移：habitType 默认 "build"（新增属性带默认值 → 轻量迁移安全）
+        (habit.properties.first { $0.name == "habitType" } as? NSAttributeDescription)?.defaultValue = "build"
 
         // MARK: Checkin
         let checkin = NSEntityDescription()
@@ -112,6 +115,7 @@ public final class HabitEntity: NSManagedObject {
     @NSManaged public var icon: String
     @NSManaged public var colorHex: String
     @NSManaged public var frequencyKind: String
+    @NSManaged public var habitType: String
     @NSManaged public var timesPerWeek: Int16
     @NSManaged public var reminderHour: Int16
     @NSManaged public var reminderMinute: Int16

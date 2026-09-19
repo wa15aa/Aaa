@@ -42,5 +42,25 @@ check(repo.allCheckins(habitId: h2.id).count == 1, "05b_dataKept")
 let s = repo.streakState(for: h1)
 check(s.current == 1 && s.todayState == .done, "06_streakBridge", "\(s)")
 
+// 7. quit 型：创建默认 daily（传 weekly 也被钳回 daily）、默认 "build" 不影响旧习惯
+let q1 = repo.createHabit(name: "戒烟", icon: "nosign", colorHex: "FF5555", frequency: .timesPerWeek(3), type: .quit)
+check(q1.habitType == "quit" && q1.frequencyKind == "daily", "07_quitForcesDaily", "\(q1.habitType)/\(q1.frequencyKind)")
+check(h1.habitType == "build", "07b_defaultBuild")
+
+// 8. quit 零破戒：streakState 路由到 quitDaily，创建当天 current=1
+let sq = repo.streakState(for: q1)
+check(sq.current == 1 && sq.todayState == .done, "08_quitNoSlip_counts", "\(sq)")
+
+// 9. quit 标破戒（checkin 即 slip）：今天破戒 → 暗格不清零
+check(repo.checkin(habitId: q1.id, day: today), "09a_markSlip")
+let sq2 = repo.streakState(for: q1)
+check(sq2.current == 0 && sq2.todayState == .dimmed && sq2.segments.isEmpty, "09b_slipToday_dimmed", "\(sq2)")
+
+// 10. 撤销破戒标记：removeCheckin 恢复
+check(repo.removeCheckin(habitId: q1.id, day: today), "10a_removeSlip")
+let sq3 = repo.streakState(for: q1)
+check(sq3.current == 1 && sq3.todayState == .done, "10b_slipUndone", "\(sq3)")
+check(!repo.removeCheckin(habitId: q1.id, day: today), "10c_removeNonexistent")
+
 print("\n===== \(passed) passed, \(failed) failed =====")
 if failed > 0 { exit(1) }
