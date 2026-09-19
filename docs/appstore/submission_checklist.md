@@ -5,7 +5,7 @@
 ## 账号与工程
 - ⛔ 开发者账号注册+$99（用户决定延后；TestFlight/沙盒/提审全堵在这）
 - 🔲 账号下来后：ASC 建 App 记录（bundle id sh.steadyhabit.Steady）、App Group capability 在 portal 注册 `group.sh.steadyhabit.Steady`（Widget 需要）
-- 🔲 StoreKit 配置文件：IAP `steady.pro.lifetime` $12.99 non-consumable（代码已按此 id？上架前核对 StoreKitManager）
+- 🔲 ASC 建 IAP：`sh.steadyhabit.lifetime` $12.99 non-consumable（已核对 StoreKitManager.swift:9 用此 id）
 - ✅ 出口合规：ITSAppUsesNonExEncryption=NO（仅用 CryptoKit）已写 Info.plist
 - 🔲 Release 构建 + 真机 smoke（含 Widget 真机走查）
 
