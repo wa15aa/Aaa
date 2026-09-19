@@ -18,6 +18,9 @@ struct ContentView: View {
     @State private var showSettings = false
     // W7 视图批①：主页 3 视图（list 清单 / week 周表矩阵 / compact 紧凑），胶囊切换器
     @AppStorage("steady.homeViewMode") private var viewMode = 0
+    // W7④ 面板自定义：streak 数字 / 周小点 显示开关（设置页 Dashboard 段）
+    @AppStorage("steady.showStreaks") private var showStreaks = true
+    @AppStorage("steady.showWeekDots") private var showWeekDots = true
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -166,8 +169,10 @@ struct ContentView: View {
             Image(systemName: habit.icon)
                 .foregroundColor(Color(hex: habit.colorHex))
             Text(habit.name).font(.subheadline)
-            Text("\(streaks[habit.id] ?? 0)d")
-                .font(.caption).foregroundColor(.secondary)
+            if showStreaks {
+                Text("\(streaks[habit.id] ?? 0)d")
+                    .font(.caption).foregroundColor(.secondary)
+            }
             Spacer()
             if habit.habitType == "quit" {
                 let slipped = checkedToday.contains(habit.id)
@@ -283,10 +288,12 @@ struct ContentView: View {
                 Text(habit.name)
                     .font(.headline)
                     .foregroundColor(.primary)
-                Text(subtitle(for: habit))
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                weekDots(for: habit)
+                if showStreaks {
+                    Text(subtitle(for: habit))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+                if showWeekDots { weekDots(for: habit) }
             }
         }
     }

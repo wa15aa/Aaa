@@ -10,6 +10,8 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @AppStorage("steady.weekStartsMonday") private var weekStartsMonday = true
     @AppStorage("steady.showBadge") private var showBadge = true
+    @AppStorage("steady.showStreaks") private var showStreaks = true
+    @AppStorage("steady.showWeekDots") private var showWeekDots = true
 
     @State private var archived: [HabitEntity] = []
     @State private var confirmDelete: HabitEntity? = nil
@@ -33,6 +35,12 @@ struct SettingsView: View {
                         .onChange(of: showBadge) { v in
                             if !v { UIApplication.shared.applicationIconBadgeNumber = 0 }
                         }
+                }
+
+                // W7④ 面板自定义：Today 行显示元素开关（对齐 HabitKit Dashboard Customization）
+                Section("Dashboard") {
+                    Toggle("Show streak counts", isOn: $showStreaks)
+                    Toggle("Show week dots", isOn: $showWeekDots)
                 }
 
                 Section("Archived habits") {
