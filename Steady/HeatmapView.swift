@@ -46,6 +46,16 @@ struct HeatmapView: View {
                         }
                     }
                     .frame(width: CGFloat(weeks.count) * (cell + gap), height: 7 * (cell + gap))
+                    // 手势直接挂 Canvas：坐标即内容坐标，天然不受滚动偏移影响
+                    .contentShape(Rectangle())
+                    .onTapGesture { loc in
+                        let w = Int(loc.x / (cell + gap))
+                        let d = Int(loc.y / (cell + gap))
+                        guard weeks.indices.contains(w), weeks[w].indices.contains(d) else { return }
+                        let day = weeks[w][d]
+                        let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
+                        onTapDay?(day, state)
+                    }
                     Color.clear.frame(width: 1).id("heatmapEnd")
                 }
             }
@@ -53,22 +63,6 @@ struct HeatmapView: View {
             .onAppear { proxy.scrollTo("heatmapEnd", anchor: .trailing) }
         }
         .frame(height: 7 * (cell + gap))
-        // Canvas 内不便于逐格手势，叠加一层透明热区
-        .overlay(heatmapTapOverlay)
-    }
-
-    private var heatmapTapOverlay: some View {
-        GeometryReader { geo in
-            Color.clear.contentShape(Rectangle())
-                .onTapGesture { loc in
-                    let w = Int(loc.x / (cell + gap))
-                    let d = Int(loc.y / (cell + gap))
-                    guard weeks.indices.contains(w), weeks[w].indices.contains(d) else { return }
-                    let day = weeks[w][d]
-                    let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
-                    onTapDay?(day, state)
-                }
-        }
     }
 
     private func color(for state: DayState) -> Color {
