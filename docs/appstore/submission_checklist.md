@@ -12,7 +12,7 @@
 ## 物料
 - ✅ listing.md：en-US 名/副标题/关键词/描述/What's New（2026-09-19 含 Quit 等全卖点）
 - ✅ es-MX 关键词位段落（listing.md 附录）
-- 🔲 ASC 截图 R2 三帧（已发飞书待批；批后 ✅）
+- ✅ ASC 截图 R2 三帧（2026-09-19 用户审批通过）
 - ✅ App 图标（docs/screenshots/appstore/ 同批备）
 - ✅ 隐私营养标签文案（privacy-nutrition.md）
 - ✅ 隐私政策 URL：https://steadyhabit.surge.sh/privacy.html（邮箱 772751110@qq.com 已上线）
