@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var streaks: [UUID: Int] = [:]
     @State private var checkedToday: Set<UUID> = []
     @State private var weeklyProgress: [UUID: Int] = [:]
+    @State private var segmentCounts: [UUID: Int] = [:]
     @State private var showAdd = false
     @State private var autoShowDetail = false
     @State private var autoShowPaywall = false
@@ -108,9 +109,13 @@ struct ContentView: View {
         }
     }
 
-    /// daily → "连续 X 天"；weekly → "本周 x/N · 连续 w 周"
+    /// daily → "连续 X 天"；weekly → "本周 x/N · 连续 w 周"；streak 归零且有历史段 → "第 N 段旅程"（反罪恶感，MVP_SPEC §2）
     private func subtitle(for habit: HabitEntity) -> String {
         let streak = streaks[habit.id] ?? 0
+        let segments = segmentCounts[habit.id] ?? 0
+        if streak == 0 && segments > 0 {
+            return "第 \(segments + 1) 段旅程 · 历史最佳仍在"
+        }
         if habit.frequencyKind == "weekly" {
             let done = weeklyProgress[habit.id] ?? 0
             return "本周 \(done)/\(habit.timesPerWeek) · 连续 \(streak) 周"
@@ -126,7 +131,9 @@ struct ContentView: View {
         checkedToday = []
         weeklyProgress = [:]
         for h in habits {
-            streaks[h.id] = repo.streakState(for: h).current
+            let state = repo.streakState(for: h)
+            streaks[h.id] = state.current
+            segmentCounts[h.id] = state.segments.count
             let checkins = repo.allCheckins(habitId: h.id)
             if checkins.contains(where: { $0.day == today.raw }) {
                 checkedToday.insert(h.id)
