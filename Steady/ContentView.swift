@@ -14,6 +14,7 @@ struct ContentView: View {
     @State private var showAdd = false
     @State private var autoShowDetail = false
     @State private var autoShowPaywall = false
+    @State private var showStatsPaywall = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -55,6 +56,10 @@ struct ContentView: View {
             .sheet(isPresented: $autoShowPaywall) {
                 PaywallView(onUnlocked: { autoShowPaywall = false })
             }
+            .sheet(isPresented: $showStatsPaywall) {
+                PaywallView(onUnlocked: { showStatsPaywall = false },
+                            requestedFeature: "Detailed stats & full history")
+            }
             .onAppear(perform: reload)
         }
     }
@@ -77,27 +82,19 @@ struct ContentView: View {
         .padding()
     }
 
+    @MainActor
     private func habitRow(_ habit: HabitEntity) -> some View {
         HStack {
-            NavigationLink {
-                HabitDetailView(habit: habit, repo: repo)
-            } label: {
-                HStack {
-                    Image(systemName: habit.icon)
-                        .font(.body)
-                        .foregroundColor(Color(hex: habit.colorHex))
-                        .frame(width: 36, height: 36)
-                        .background(Color(hex: habit.colorHex).opacity(0.15))
-                        .cornerRadius(10)
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(habit.name)
-                            .font(.headline)
-                        Text(subtitle(for: habit))
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        weekDots(for: habit)
-                    }
+            // replan-v2 §4.2：统计页功能点触发 paywall——免费用户点行进 paywall（requestedFeature 置顶），Pro 直达详情
+            if StoreKitManager.shared.isPro {
+                NavigationLink {
+                    HabitDetailView(habit: habit, repo: repo)
+                } label: {
+                    rowLabel(habit)
                 }
+            } else {
+                Button { showStatsPaywall = true } label: { rowLabel(habit) }
+                    .buttonStyle(.plain)
             }
             Spacer()
             Button {
@@ -114,6 +111,26 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
             .disabled(checkedToday.contains(habit.id))
+        }
+    }
+
+    private func rowLabel(_ habit: HabitEntity) -> some View {
+        HStack {
+            Image(systemName: habit.icon)
+                .font(.body)
+                .foregroundColor(Color(hex: habit.colorHex))
+                .frame(width: 36, height: 36)
+                .background(Color(hex: habit.colorHex).opacity(0.15))
+                .cornerRadius(10)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(habit.name)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                Text(subtitle(for: habit))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                weekDots(for: habit)
+            }
         }
     }
 
@@ -200,6 +217,8 @@ struct AddHabitView: View {
     @State private var hasReminder = false
     @State private var reminderTime = Calendar.current.date(from: DateComponents(hour: 9, minute: 0)) ?? Date()
     @State private var showPaywall = false
+    @State private var habitType: HabitType = .build
+    @State private var showQuitPaywall = false
     @State private var icon = "star.fill"
     @State private var colorHex = "4F8CFF"
 
@@ -214,7 +233,8 @@ struct AddHabitView: View {
         let repo = HabitRepository(context: context)
         let habit = repo.createHabit(
             name: name, icon: icon, colorHex: colorHex,
-            frequency: isWeekly ? .timesPerWeek(timesPerWeek) : .daily)
+            frequency: isWeekly ? .timesPerWeek(timesPerWeek) : .daily,
+            type: habitType)
         if hasReminder {
             NotificationManager.requestAuthorization()
             let comps = Calendar.current.dateComponents([.hour, .minute], from: reminderTime)
@@ -253,9 +273,29 @@ struct AddHabitView: View {
                         }
                     }
                 }
-                Toggle("Weekly goal", isOn: $isWeekly)
-                if isWeekly {
-                    Stepper("\(timesPerWeek) times per week", value: $timesPerWeek, in: 1...6)
+                if habitType == .build {
+                    Toggle("Weekly goal", isOn: $isWeekly)
+                    if isWeekly {
+                        Stepper("\(timesPerWeek) times per week", value: $timesPerWeek, in: 1...6)
+                    }
+                }
+                Section("Type") {
+                    // replan-v2 §4.1：Quit 为 Pro 功能（paywall 功能点触发之一），免费用户选 Quit → paywall
+                    Picker("Habit type", selection: $habitType) {
+                        Text("Build — do it every day").tag(HabitType.build)
+                        Text("Quit — slip days don't break you").tag(HabitType.quit)
+                    }
+                    .onChange(of: habitType) { newValue in
+                        if newValue == .quit && !StoreKitManager.shared.isPro {
+                            habitType = .build
+                            showQuitPaywall = true
+                        }
+                    }
+                    if habitType == .quit {
+                        Text("Only mark days you slipped. One slip never breaks your streak.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
                 }
                 Toggle("Daily reminder", isOn: $hasReminder)
                 if hasReminder {
@@ -282,6 +322,10 @@ struct AddHabitView: View {
             }
             .sheet(isPresented: $showPaywall) {
                 PaywallView(onUnlocked: save)
+            }
+            .sheet(isPresented: $showQuitPaywall) {
+                PaywallView(onUnlocked: { habitType = .quit },
+                            requestedFeature: "Quit habits — slip days don't break you")
             }
         }
     }

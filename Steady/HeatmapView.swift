@@ -3,10 +3,10 @@ import SteadyCore
 import StreakEngine
 
 /// GitHub 式当年热力图：行=周一到周日，列=周（MVP_SPEC §1）。
-/// 状态色：done=习惯色，dimmed=暗格（断签1天 streak 仍活），missed=灰，future/beforeStart=近透明。
+/// 状态色：done=习惯色，dimmed=暗格（断签/破戒1天 streak 仍活），missed=灰，future/beforeStart=近透明。
 struct HeatmapView: View {
     let habit: HabitEntity
-    let checkins: Set<DayKey>
+    let checkins: Set<DayKey> // quit 型时此集合 = 破戒天
     let createdDay: DayKey
     let today: DayKey
 
@@ -14,6 +14,7 @@ struct HeatmapView: View {
 
     private let cell: CGFloat = 12
     private let gap: CGFloat = 3
+    private var isQuit: Bool { habit.habitType == "quit" }
 
     /// 当年 1 月 1 日所在周的周一 → 今天
     private var weeks: [[DayKey]] {
@@ -31,6 +32,13 @@ struct HeatmapView: View {
 
     private var accent: Color { Color(hex: habit.colorHex) }
 
+    private func state(for day: DayKey) -> DayState {
+        if isQuit {
+            return StreakEngine.quitDayState(day: day, slips: checkins, createdDay: createdDay, today: today)
+        }
+        return StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
+    }
+
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
@@ -38,10 +46,9 @@ struct HeatmapView: View {
                     Canvas { ctx, size in
                         for (w, week) in weeks.enumerated() {
                             for (d, day) in week.enumerated() {
-                                let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
                                 let rect = CGRect(x: CGFloat(w) * (cell + gap), y: CGFloat(d) * (cell + gap), width: cell, height: cell)
                                 let path = Path(roundedRect: rect, cornerRadius: 2.5)
-                                ctx.fill(path, with: .color(color(for: state)))
+                                ctx.fill(path, with: .color(color(for: state(for: day))))
                             }
                         }
                     }
@@ -53,8 +60,7 @@ struct HeatmapView: View {
                         let d = Int(loc.y / (cell + gap))
                         guard weeks.indices.contains(w), weeks[w].indices.contains(d) else { return }
                         let day = weeks[w][d]
-                        let state = StreakEngine.dayState(day: day, checkins: checkins, createdDay: createdDay, today: today)
-                        onTapDay?(day, state)
+                        onTapDay?(day, state(for: day))
                     }
                     Color.clear.frame(width: 1).id("heatmapEnd")
                 }
@@ -75,48 +81,71 @@ struct HeatmapView: View {
     }
 }
 
-/// 习惯详情：热力图 + 统计 + 点格子看详情
+/// 习惯详情（W6 打磨，基准 habitkit-app-teardown 04 页）：
+/// 头部徽章+名 → 今日主动作（build=打卡 / quit=标破戒）→ 统计行 → 热力图 → 点格子看详情
 struct HabitDetailView: View {
     let habit: HabitEntity
     let repo: HabitRepository
 
     @State private var selected: (DayKey, DayState)? = nil
+    @State private var tick = 0 // 打卡/标破戒后触发重算
 
-    private var state: StreakState { repo.streakState(for: habit) }
-    private var checkinSet: Set<DayKey> { Set(repo.allCheckins(habitId: habit.id).map { DayKey($0.day) }) }
+    private var isQuit: Bool { habit.habitType == "quit" }
+    private var state: StreakState { _ = tick; return repo.streakState(for: habit) }
+    private var checkinSet: Set<DayKey> { _ = tick; return Set(repo.allCheckins(habitId: habit.id).map { DayKey($0.day) }) }
+    private var today: String { HabitRepository.todayKey() }
+    private var todayMarked: Bool { checkinSet.contains(DayKey(today)) }
+    private var accent: Color { Color(hex: habit.colorHex) }
 
-    /// 完成率（MVP_SPEC §3.7）：daily = 打卡天数/创建以来天数；weekly = 达标周数/创建以来周数
+    /// 完成率（MVP_SPEC §3.7）：daily = 打卡天数/创建以来天数；quit = 无破戒天/创建以来天数；weekly = 达标周数/创建以来周数
     private var completionRate: Int {
         let created = DayKey(habit.createdDay)
-        let today = DayKey(HabitRepository.todayKey())
-        // 统一用引擎的整数日期算法算天数
+        let todayKey = DayKey(today)
         func daysBetween(_ a: DayKey, _ b: DayKey) -> Int {
             var n = 0, d = a
             while d < b { d = StreakEngine.addDays(d, 1); n += 1 }
             return n
         }
         if habit.frequencyKind == "weekly" {
-            let totalWeeks = max(1, daysBetween(StreakEngine.weekStart(created), StreakEngine.weekStart(today)) / 7 + 1)
+            let totalWeeks = max(1, daysBetween(StreakEngine.weekStart(created), StreakEngine.weekStart(todayKey)) / 7 + 1)
             var met = 0
             var w = StreakEngine.weekStart(created)
-            while w <= today {
+            while w <= todayKey {
                 let weekDays = (0..<7).map { StreakEngine.addDays(w, $0) }
                 if weekDays.filter({ checkinSet.contains($0) }).count >= Int(habit.timesPerWeek) { met += 1 }
                 w = StreakEngine.addDays(w, 7)
             }
             return met * 100 / totalWeeks
         }
-        let totalDays = max(1, daysBetween(created, today) + 1)
-        let done = checkinSet.filter { $0 >= created && $0 <= today }.count
+        let totalDays = max(1, daysBetween(created, todayKey) + 1)
+        if isQuit {
+            let slips = checkinSet.filter { $0 >= created && $0 <= todayKey }.count
+            return max(0, (totalDays - slips)) * 100 / totalDays
+        }
+        let done = checkinSet.filter { $0 >= created && $0 <= todayKey }.count
         return done * 100 / totalDays
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            HStack {
-                Image(systemName: habit.icon).foregroundColor(Color(hex: habit.colorHex))
-                Text(habit.name).font(.title2)
+            HStack(spacing: 12) {
+                Image(systemName: habit.icon)
+                    .font(.title3)
+                    .foregroundColor(accent)
+                    .frame(width: 36, height: 36)
+                    .background(accent.opacity(0.15))
+                    .cornerRadius(10)
+                Text(habit.name).font(.title2).bold()
+                if isQuit {
+                    Text("QUIT")
+                        .font(.caption2).bold()
+                        .padding(.horizontal, 6).padding(.vertical, 2)
+                        .background(accent.opacity(0.15))
+                        .foregroundColor(accent)
+                        .cornerRadius(4)
+                }
             }
+            todayAction
             HStack(spacing: 24) {
                 stat("Current", "\(state.current)")
                 stat("Best", "\(state.best)")
@@ -126,7 +155,7 @@ struct HabitDetailView: View {
             HeatmapView(habit: habit,
                         checkins: checkinSet,
                         createdDay: DayKey(habit.createdDay),
-                        today: DayKey(HabitRepository.todayKey())) { day, st in
+                        today: DayKey(today)) { day, st in
                 selected = (day, st)
             }
             if let (day, st) = selected {
@@ -140,11 +169,74 @@ struct HabitDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    /// 今日主动作：详情页是补卡/标破戒的自然入口（HabitKit 04 页大红 ✓ 的位置）
+    @ViewBuilder
+    private var todayAction: some View {
+        if isQuit {
+            if todayMarked {
+                HStack {
+                    Label("Slip marked — one slip doesn't break you", systemImage: "bandage.fill")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                    Button("Undo") {
+                        repo.removeCheckin(habitId: habit.id, day: today)
+                        tick += 1
+                    }
+                    .font(.subheadline)
+                }
+            } else {
+                Button {
+                    repo.checkin(habitId: habit.id, day: today)
+                    tick += 1
+                } label: {
+                    Text("I slipped today")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding()
+                        .background(Color(.systemGray5))
+                        .foregroundColor(.primary)
+                        .cornerRadius(12)
+                }
+                .buttonStyle(.plain)
+            }
+        } else {
+            Button {
+                let generator = UIImpactFeedbackGenerator(style: .medium)
+                generator.prepare()
+                if repo.checkin(habitId: habit.id, day: today) {
+                    generator.impactOccurred()
+                }
+                tick += 1
+            } label: {
+                Label(todayMarked ? "Done for today" : "Check in for today",
+                      systemImage: todayMarked ? "checkmark.circle.fill" : "circle")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(todayMarked ? accent.opacity(0.2) : accent)
+                    .foregroundColor(todayMarked ? accent : .white)
+                    .cornerRadius(12)
+            }
+            .buttonStyle(.plain)
+            .disabled(todayMarked)
+        }
+    }
+
     private func stat(_ name: String, _ value: String) -> some View {
         VStack { Text(value).font(.headline); Text(name).font(.caption).foregroundColor(.secondary) }
     }
 
     private func label(for state: DayState) -> String {
+        if isQuit {
+            switch state {
+            case .done: return "Clean day"
+            case .dimmed: return "Slip day — streak survived"
+            case .missed: return "Slip run — journey reset"
+            case .future: return "Upcoming"
+            case .beforeStart: return "Before habit created"
+            }
+        }
         switch state {
         case .done: return "Done"
         case .dimmed: return "Missed 1 day — streak survived"
