@@ -2,6 +2,11 @@
 
 代码侧已就绪：`.github/workflows/deploy.yml`（手动触发 deploy job）+ `fastlane/Fastfile`（gym 归档 + ASC API key 上传）。**链路跑通需要用户完成以下一次性配置**（预计 30 分钟，全部是"只有用户能做"项）。
 
+## ⏰ 倒排死线（sage 调研：kb/fact/default/january-peak-season-calendar.md）
+- **2026-12-11 = 提审最后期限**（12 月审核全年最慢 + 圣诞冻结 12/23-27）
+- 倒推：12/11 提审 ← 11 月底前 TestFlight 外测 ← **开发者账号越早越好，每拖一周都在吃缓冲**
+- 旺季窗口 2026-12-26 ~ 2027-01-08；Quitter's Day（1/9）后是 Steady"断签不清零"叙事的主场
+
 ## 用户步骤清单
 
 ### 1. Apple 开发者账号（前置，$99/年）

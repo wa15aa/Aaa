@@ -56,3 +56,16 @@ Initial release: elastic streaks, yearly heatmap, weekly-frequency habits, gentl
 ## 待用户侧配合
 - 截图上传到 ASC 需开发者账号（waiting_on_user.md #1）
 - 关键词上线后 2 周看搜索排名再迭代（记入 growth KB 对账）
+
+## 1 月旺季版话术（Quitter's Day 后启用，2027-01-09 起）
+依据：sage 调研 kb/fact/default/january-peak-season-calendar.md——1/9 后鸡血素材 ROAS -22%、微习惯/留存叙事 +42%。届时切换：
+
+**Promotional Text（1 月版，170 字符）**
+Everyone quits on Quitter's Day. You don't have to. Steady forgives a missed day — your streak survives, your history stays. One-time $12.99, no subscription.
+
+**Reddit/社媒话术（1 月版）**
+It's Quitter's Day — the Friday when ~80% of New Year's resolutions die. The streak apps you downloaded last week are about to show you a big fat zero. That zero is why people quit twice. I built Steady around the opposite rule: miss one day, nothing breaks. Miss two, you start a new journey segment — your history is kept, not erased. $12.99 once, no subscription. (happy to share the link if allowed)
+
+**ASO 副标题候选（1 月版）**："Survive Quitter's Day"（30 字符内，A/B 测）
+
+**节奏**：12/26-1/8 用现行"新年计划"获客口径；1/9 起切上面这套留存叙事。
