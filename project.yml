@@ -17,6 +17,8 @@ targets:
         PRODUCT_NAME: Steady
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         LD_RUNPATH_SEARCH_PATHS: ["$(inherited)", "@executable_path/Frameworks"]
+        # W7 Widget：App Group 共享 CoreData
+        CODE_SIGN_ENTITLEMENTS: Steady/Steady.entitlements
       configs:
         Debug:
           ONLY_ACTIVE_ARCH: YES
@@ -25,6 +27,9 @@ targets:
       - package: StreakEngine
         product: SteadyCore
         embed: true
+      - target: SteadyWidget
+        embed: true
+        codeSignOnCopy: true
     info:
       path: Steady/Info.plist
       properties:
@@ -35,6 +40,31 @@ targets:
         CFBundleDisplayName: Steady
         # 仅用 Apple 系统 CryptoKit 加密备份 → 免出口合规自证
         ITSAppUsesNonExemptEncryption: NO
+  SteadyWidget:
+    type: app-extension
+    platform: iOS
+    sources: [SteadyWidget]
+    settings:
+      base:
+        SWIFT_VERSION: "5.0"
+        PRODUCT_NAME: SteadyWidget
+        PRODUCT_BUNDLE_IDENTIFIER: sh.steadyhabit.Steady.Widget
+        CODE_SIGN_ENTITLEMENTS: SteadyWidget/SteadyWidget.entitlements
+        LD_RUNPATH_SEARCH_PATHS: ["$(inherited)", "@executable_path/Frameworks", "@executable_path/../../Frameworks"]
+      configs:
+        Debug:
+          ONLY_ACTIVE_ARCH: YES
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+    dependencies:
+      - package: StreakEngine
+        product: SteadyCore
+        embed: true
+    info:
+      path: SteadyWidget/Info.plist
+      properties:
+        CFBundleDisplayName: Steady Widget
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
   SteadyTests:
     type: bundle.unit-test
     platform: iOS
@@ -57,6 +87,7 @@ schemes:
     build:
       targets:
         Steady: all
+        SteadyWidget: all
         SteadyTests: [test]
     test:
       targets: [SteadyTests]

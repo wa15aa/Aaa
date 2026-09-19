@@ -9,12 +9,16 @@
 /* Begin PBXBuildFile section */
 		0145C42D478CAB89638EF120 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E017EC5D12183A5DFE0DFFD2 /* SettingsView.swift */; };
 		024B56554EC65523C02BF08F /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */; };
+		1313F16A3C34BD612E33D4F8 /* SteadyWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 8BAB03D593D10EB0F27DAE06 /* SteadyWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		19F4A8E5C363C55CD7124D53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */; };
 		1A6170890734FDFCE63A1DED /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94F35C004F10644A71F9DC5 /* NotificationManager.swift */; };
 		33D74C95EB644D39CD0EECE2 /* SteadyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */; };
+		412499366FF72E484D9D4692 /* SteadyWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9111D8DD39BB992BEFC44D81 /* SteadyWidget.swift */; };
+		5038EAABDE355BDF99D222F8 /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = D38435A536DADB973827479F /* SteadyCore */; };
 		54FC9EA8115E1CC3F85AC032 /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83B4520E21DC524DBDC73FDD /* PaywallView.swift */; };
 		61304DC08E94CB5657D9A939 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 629143E033178FE717C1F005 /* ContentView.swift */; };
 		A92BC3117B353870C9717F48 /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 89B2C6FA6667CC730C1B291F /* SteadyCore */; };
+		AF3CD82E9909A60F34F3C2A9 /* SteadyCore in Embed Frameworks */ = {isa = PBXBuildFile; productRef = D38435A536DADB973827479F /* SteadyCore */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C63E4C1E6917B74C0843CA54 /* HeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 034F485C976AD8BDC3BAE9E0 /* HeatmapView.swift */; };
 		CDE656DAC7762629DD9C74FD /* SteadyCore in Frameworks */ = {isa = PBXBuildFile; productRef = B05D83B6AED6656BE55FB8DD /* SteadyCore */; };
 		D4BDC9D37A1C066EB4495CF0 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BE126F15FA669A8293961D9 /* OnboardingView.swift */; };
@@ -23,6 +27,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		BC35075C4703E201D08580D9 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = F22E28659269B5ADA6A11B41 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E4378980E3F6511F0C93FA29;
+			remoteInfo = SteadyWidget;
+		};
 		BEE3857C27A28E681120DE43 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = F22E28659269B5ADA6A11B41 /* Project object */;
@@ -33,6 +44,28 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		7A61ECF85FDA74727608C069 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AF3CD82E9909A60F34F3C2A9 /* SteadyCore in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9AB294BFD0AA21A4AD4BBAC5 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				1313F16A3C34BD612E33D4F8 /* SteadyWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A7E5BD3BF6D2E52DCA45489E /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -51,10 +84,15 @@
 		0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SteadyApp.swift; sourceTree = "<group>"; };
 		116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
 		16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = SteadyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		245D362AA7422BF986B90150 /* SteadyWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SteadyWidget.entitlements; sourceTree = "<group>"; };
+		3EB5BF9FA402E78DC74A6BA4 /* Steady.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Steady.entitlements; sourceTree = "<group>"; };
 		429A2A6F44C40CF1F24C020C /* Steady.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Steady.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		629143E033178FE717C1F005 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		74CDFD3D298DB4049EE10099 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7BE126F15FA669A8293961D9 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 		83B4520E21DC524DBDC73FDD /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		8BAB03D593D10EB0F27DAE06 /* SteadyWidget.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = SteadyWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		9111D8DD39BB992BEFC44D81 /* SteadyWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SteadyWidget.swift; sourceTree = "<group>"; };
 		B5937746994F72E84F727FF6 /* RepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryTests.swift; sourceTree = "<group>"; };
 		BCE12CEADDFFD7CB83D94D34 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D2CA95E55B1A36E020F1B615 /* StreakEngine */ = {isa = PBXFileReference; lastKnownFileType = folder; name = StreakEngine; path = StreakEngine; sourceTree = SOURCE_ROOT; };
@@ -64,6 +102,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		16CD79A62C2E83765235B1DB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5038EAABDE355BDF99D222F8 /* SteadyCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C52EA1691C20289004F43435 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -94,6 +140,7 @@
 				7BE126F15FA669A8293961D9 /* OnboardingView.swift */,
 				83B4520E21DC524DBDC73FDD /* PaywallView.swift */,
 				E017EC5D12183A5DFE0DFFD2 /* SettingsView.swift */,
+				3EB5BF9FA402E78DC74A6BA4 /* Steady.entitlements */,
 				0E89A1D85FFB899ABB1D79D4 /* SteadyApp.swift */,
 				116CB5932615DBB1C2EDB16A /* StoreKitManager.swift */,
 			);
@@ -114,8 +161,19 @@
 				B68766A8C2C9D9A7139137FB /* Packages */,
 				13A3188829ADF83C6225B878 /* Steady */,
 				14D36E9966361AFF9737A195 /* SteadyTests */,
+				866C80AD98B8CCF2E891C018 /* SteadyWidget */,
 				884BEA2C9D9BFF9EE65B446C /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		866C80AD98B8CCF2E891C018 /* SteadyWidget */ = {
+			isa = PBXGroup;
+			children = (
+				74CDFD3D298DB4049EE10099 /* Info.plist */,
+				245D362AA7422BF986B90150 /* SteadyWidget.entitlements */,
+				9111D8DD39BB992BEFC44D81 /* SteadyWidget.swift */,
+			);
+			path = SteadyWidget;
 			sourceTree = "<group>";
 		};
 		884BEA2C9D9BFF9EE65B446C /* Products */ = {
@@ -123,6 +181,7 @@
 			children = (
 				429A2A6F44C40CF1F24C020C /* Steady.app */,
 				16C7C1FEA67FE6A8F81181EF /* SteadyTests.xctest */,
+				8BAB03D593D10EB0F27DAE06 /* SteadyWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -165,11 +224,13 @@
 				395A771FF73C211FD2B53462 /* Sources */,
 				FFE82EEBEE57857E961FC55F /* Resources */,
 				C52EA1691C20289004F43435 /* Frameworks */,
+				9AB294BFD0AA21A4AD4BBAC5 /* Embed Foundation Extensions */,
 				A7E5BD3BF6D2E52DCA45489E /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				7080CD424F64F976B211A5B3 /* PBXTargetDependency */,
 			);
 			name = Steady;
 			packageProductDependencies = (
@@ -178,6 +239,26 @@
 			productName = Steady;
 			productReference = 429A2A6F44C40CF1F24C020C /* Steady.app */;
 			productType = "com.apple.product-type.application";
+		};
+		E4378980E3F6511F0C93FA29 /* SteadyWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E0998AFEAA4BCC322F016FDD /* Build configuration list for PBXNativeTarget "SteadyWidget" */;
+			buildPhases = (
+				8E573692F6763CCA002843E1 /* Sources */,
+				16CD79A62C2E83765235B1DB /* Frameworks */,
+				7A61ECF85FDA74727608C069 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SteadyWidget;
+			packageProductDependencies = (
+				D38435A536DADB973827479F /* SteadyCore */,
+			);
+			productName = SteadyWidget;
+			productReference = 8BAB03D593D10EB0F27DAE06 /* SteadyWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -207,6 +288,7 @@
 			targets = (
 				6E0EE4253784D97976912F5B /* Steady */,
 				049A648C991D0AABAB63B7A2 /* SteadyTests */,
+				E4378980E3F6511F0C93FA29 /* SteadyWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -238,6 +320,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		8E573692F6763CCA002843E1 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				412499366FF72E484D9D4692 /* SteadyWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E6413D6F18FD0A00F2513907 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -254,6 +344,11 @@
 			target = 6E0EE4253784D97976912F5B /* Steady */;
 			targetProxy = BEE3857C27A28E681120DE43 /* PBXContainerItemProxy */;
 		};
+		7080CD424F64F976B211A5B3 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E4378980E3F6511F0C93FA29 /* SteadyWidget */;
+			targetProxy = BC35075C4703E201D08580D9 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -269,6 +364,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Steady/Steady.entitlements;
 				INFOPLIST_FILE = Steady/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -288,6 +384,22 @@
 			};
 			name = Debug;
 		};
+		6F69C005682CE3056D3BCB5F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SteadyWidget/SteadyWidget.entitlements;
+				INFOPLIST_FILE = SteadyWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady.Widget;
+				PRODUCT_NAME = SteadyWidget;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		A0AE70F7F8144205A296158E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -303,6 +415,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Steady/Steady.entitlements;
 				INFOPLIST_FILE = Steady/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -311,6 +424,24 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady;
 				PRODUCT_NAME = Steady;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B0B36E06A017FA4838286895 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SteadyWidget/SteadyWidget.entitlements;
+				INFOPLIST_FILE = SteadyWidget/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = sh.steadyhabit.Steady.Widget;
+				PRODUCT_NAME = SteadyWidget;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 			};
@@ -358,6 +489,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		E0998AFEAA4BCC322F016FDD /* Build configuration list for PBXNativeTarget "SteadyWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B0B36E06A017FA4838286895 /* Debug */,
+				6F69C005682CE3056D3BCB5F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
@@ -373,6 +513,10 @@
 			productName = SteadyCore;
 		};
 		B05D83B6AED6656BE55FB8DD /* SteadyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SteadyCore;
+		};
+		D38435A536DADB973827479F /* SteadyCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SteadyCore;
 		};

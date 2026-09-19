@@ -520,13 +520,4 @@ struct AddHabitView: View {
     }
 }
 
-extension Color {
-    init(hex: String) {
-        var v = hex
-        if v.hasPrefix("#") { v.removeFirst() }
-        let n = UInt64(v, radix: 16) ?? 0x4F8CFF
-        self.init(red: Double((n >> 16) & 0xFF) / 255,
-                  green: Double((n >> 8) & 0xFF) / 255,
-                  blue: Double(n & 0xFF) / 255)
-    }
-}
+// Color(hex:) 已上移到 SteadyCore/ColorHex.swift（widget 扩展共用）

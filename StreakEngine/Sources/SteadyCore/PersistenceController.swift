@@ -12,6 +12,27 @@ public final class PersistenceController {
 
     public let container: NSPersistentContainer
 
+    /// W7 Widget：主 app 与 widget 扩展共享 App Group 容器里的同一个 store。
+    /// 存量设备迁移：group 库不存在而默认位置存在时，整库搬移（moved 永久生效）。
+    public static let appGroupID = "group.sh.steadyhabit.Steady"
+
+    public static func sharedStoreURL() -> URL? {
+        guard let groupDir = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupID) else {
+            return nil // 无 entitlement（如单测）→ 回落默认
+        }
+        let groupURL = groupDir.appendingPathComponent("Steady.sqlite")
+        let defaultURL = NSPersistentContainer.defaultDirectoryURL().appendingPathComponent("Steady.sqlite")
+        let fm = FileManager.default
+        if !fm.fileExists(atPath: groupURL.path), fm.fileExists(atPath: defaultURL.path) {
+            // 一次性搬移（含 -wal/-shm）；失败则保留默认位置，下次启动重试
+            for suffix in ["", "-wal", "-shm"] {
+                try? fm.moveItem(at: URL(fileURLWithPath: defaultURL.path + suffix),
+                                 to: URL(fileURLWithPath: groupURL.path + suffix))
+            }
+        }
+        return fm.fileExists(atPath: groupURL.path) || !fm.fileExists(atPath: defaultURL.path) ? groupURL : nil
+    }
+
     public init(inMemory: Bool = false) {
         let model = PersistenceController.makeModel()
         container = NSPersistentContainer(name: "Steady", managedObjectModel: model)
@@ -19,6 +40,8 @@ public final class PersistenceController {
             let desc = NSPersistentStoreDescription()
             desc.type = NSInMemoryStoreType
             container.persistentStoreDescriptions = [desc]
+        } else if let url = PersistenceController.sharedStoreURL() {
+            container.persistentStoreDescriptions = [NSPersistentStoreDescription(url: url)]
         }
         container.loadPersistentStores { _, error in
             if let error = error {

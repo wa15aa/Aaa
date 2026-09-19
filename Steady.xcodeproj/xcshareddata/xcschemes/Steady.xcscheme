@@ -35,6 +35,20 @@
                ReferencedContainer = "container:Steady.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E4378980E3F6511F0C93FA29"
+               BuildableName = "SteadyWidget.appex"
+               BlueprintName = "SteadyWidget"
+               ReferencedContainer = "container:Steady.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
