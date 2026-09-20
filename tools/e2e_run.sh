@@ -23,6 +23,14 @@ for f in e2e/*.yaml; do
     rc=$?
     t1=$(python3 -c 'import time;print(time.time())')
     dur=$(python3 -c "print(f'{$t1-$t0:.1f}')")
+    # 冷启动度量：18_cold_start 跑完立即读 App 内打点（后续流程会覆盖该值）
+    if [ "$name" = "18_cold_start" ]; then
+        # simctl defaults read 域解析不可靠 → 直读 App 容器 plist
+        appdata=$(xcrun simctl get_app_container booted "$BUNDLE" data 2>/dev/null)
+        cold_ms=$(plutil -p "$appdata/Library/Preferences/$BUNDLE.plist" 2>/dev/null | grep lastColdStartMs | grep -oE '[0-9]+' | tail -1 || true)
+        cold_ms=${cold_ms:-?}
+        echo "COLDSTART_MS $cold_ms" >> "$REPORT"
+    fi
     # 哨兵②：流程后进程存活检查
     sleep 1
     if ! xcrun simctl spawn booted launchctl list 2>/dev/null | grep -q "$BUNDLE"; then
@@ -78,6 +86,8 @@ n_crash=$(grep -c "^CRASHED" "$REPORT" || true)
 n_fail=$(grep -c "^FAILED" "$REPORT" || true)
 n_pass=$(grep -c "^PASS" "$REPORT" || true)
 echo ""
+cold=$(grep "^COLDSTART_MS" "$REPORT" | awk '{print $2}')
+[ -n "$cold" ] && echo "冷启动打点: ${cold}ms（DoD#1 红线 3000ms，模拟器偏乐观）"
 echo "汇总: PASS=$n_pass FAILED=$n_fail CRASHED=$n_crash（含新 ips: $(echo $new_ips | wc -w | tr -d ' ')）"
 
 if [ -n "$new_ips" ] || [ "$n_crash" -gt 0 ]; then exit 2; fi

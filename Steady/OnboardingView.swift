@@ -43,6 +43,16 @@ struct OnboardingView: View {
             .padding(.horizontal, 24)
             .padding(.bottom, 20)
         }
+        #if DEBUG
+        // 冷启动打点终点（首启动路径：onboarding 盖住 ContentView，其 onAppear 不触发）
+        .onAppear {
+            let t0 = UserDefaults.standard.double(forKey: "steady.launchStartTs")
+            if t0 > 0 {
+                let ms = Int((CFAbsoluteTimeGetCurrent() - t0) * 1000)
+                UserDefaults.standard.set(ms, forKey: "steady.lastColdStartMs")
+            }
+        }
+        #endif
     }
 
     private func card(_ icon: String, _ title: String, _ body: String) -> some View {

@@ -7,6 +7,10 @@ struct SteadyApp: App {
     let persistence = PersistenceController.shared
 
     init() {
+        #if DEBUG
+        // 冷启动打点起点（DoD#1 度量）：Swift 全局变量惰性初始化不可靠，init 即写起点
+        UserDefaults.standard.set(CFAbsoluteTimeGetCurrent(), forKey: "steady.launchStartTs")
+        #endif
         // 每日首次启动：iCloud 加密增量备份（MVP_SPEC §3.5）
         // 注意：不在启动时请求通知权限（DoD#5），权限在用户自设第一条提醒时才弹
         let container = persistence.container

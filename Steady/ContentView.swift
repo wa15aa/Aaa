@@ -109,7 +109,17 @@ struct ContentView: View {
                 PaywallView(onUnlocked: { showStatsPaywall = false },
                             requestedFeature: "Detailed stats & full history")
             }
-            .onAppear(perform: reload)
+            .onAppear {
+                #if DEBUG
+                // 冷启动打点终点：首屏首帧渲染完成 → 写 UserDefaults 供 e2e_run.sh 读取（DoD#1）
+                let t0 = UserDefaults.standard.double(forKey: "steady.launchStartTs")
+                if t0 > 0 {
+                    let ms = Int((CFAbsoluteTimeGetCurrent() - t0) * 1000)
+                    UserDefaults.standard.set(ms, forKey: "steady.lastColdStartMs")
+                }
+                #endif
+                reload()
+            }
             // 首启动一页式 onboarding；截图管线非 none 时压住（"none" 归一化为不压）
             .fullScreenCover(isPresented: Binding(
                 get: {
