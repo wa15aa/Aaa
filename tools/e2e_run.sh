@@ -27,7 +27,13 @@ for f in e2e/*.yaml; do
     if [ "$name" = "18_cold_start" ]; then
         # simctl defaults read 域解析不可靠 → 直读 App 容器 plist
         appdata=$(xcrun simctl get_app_container booted "$BUNDLE" data 2>/dev/null)
-        cold_ms=$(plutil -p "$appdata/Library/Preferences/$BUNDLE.plist" 2>/dev/null | grep lastColdStartMs | grep -oE '[0-9]+' | tail -1 || true)
+        # cfprefsd 缓存：跑完立刻读可能没刷盘，最多等 10s 重试 5 次
+        cold_ms=""
+        for i in 1 2 3 4 5; do
+            cold_ms=$(plutil -p "$appdata/Library/Preferences/$BUNDLE.plist" 2>/dev/null | grep lastColdStartMs | grep -oE '[0-9]+' | tail -1 || true)
+            [ -n "$cold_ms" ] && break
+            sleep 2
+        done
         cold_ms=${cold_ms:-?}
         echo "COLDSTART_MS $cold_ms" >> "$REPORT"
     fi
