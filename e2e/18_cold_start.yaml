@@ -1,0 +1,11 @@
+appId: sh.steadyhabit.Steady
+---
+# 冷启动度量（DoD#1：≤3s 到首屏可交互）
+# clearState 清数据+终止旧进程≈全新安装首次启动；extendedWaitUntil 3s 超时即判 FAILED
+# 模拟器暖系统缓存，结果偏乐观；真机冷启动仍以用户设备为准
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-screenshotMode": "none"}
+- extendedWaitUntil:
+    visible: "Get started"
+    timeout: 3000
