@@ -1,0 +1,12 @@
+appId: sh.steadyhabit.Steady
+---
+# 免费用户点习惯行 → 统计功能点 paywall（置顶 UNLOCKS 文案）
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Meditate 10 min"
+- assertVisible: "UNLOCKS"
+- assertVisible: "Detailed stats & full history"
+- assertVisible: "Restore purchase"
+- tapOn: "Not now"
+- assertVisible: "Today"

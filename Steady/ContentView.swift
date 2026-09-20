@@ -22,6 +22,9 @@ struct ContentView: View {
     @AppStorage("steady.showStreaks") private var showStreaks = true
     @AppStorage("steady.showWeekDots") private var showWeekDots = true
     @AppStorage("steady.showOverview") private var showOverview = true
+    // W7 onboarding 移到此处由 @AppStorage 驱动：UserDefaults 写入自动触发重渲染，
+    // 修复 SteadyApp 里裸 Binding 读 defaults 不响应（Get started 关不掉 / Replay 不弹）
+    @AppStorage("steady.onboarded") private var onboarded = false
 
     private var repo: HabitRepository { HabitRepository(context: context) }
 
@@ -44,6 +47,14 @@ struct ContentView: View {
                                 copy.move(fromOffsets: from, toOffset: to)
                                 repo.reorder(copy)
                                 habits = copy
+                            }
+                            .onDelete { idx in
+                                // 滑动删除=归档（软删，Checkin 保留；Settings→Archived 可恢复/彻底删除）
+                                for i in idx {
+                                    NotificationManager.cancelReminder(habitId: habits[i].id)
+                                    repo.archive(habits[i])
+                                }
+                                reload()
                             }
                         } header: {
                             // quit 型默认"已守住"，不计入待完成数；破戒标记也不是 done
@@ -75,11 +86,13 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button { showSettings = true } label: { Image(systemName: "gearshape") }
+                        .accessibilityLabel("Settings")
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     HStack {
                         EditButton()
                         Button { showAdd = true } label: { Image(systemName: "plus") }
+                            .accessibilityLabel("Add habit")
                     }
                 }
             }
@@ -97,6 +110,16 @@ struct ContentView: View {
                             requestedFeature: "Detailed stats & full history")
             }
             .onAppear(perform: reload)
+            // 首启动一页式 onboarding；截图管线非 none 时压住（"none" 归一化为不压）
+            .fullScreenCover(isPresented: Binding(
+                get: {
+                    let sm = UserDefaults.standard.string(forKey: "screenshotMode")
+                    return !onboarded && (sm == nil || sm == "none")
+                },
+                set: { if !$0 { onboarded = true } }
+            )) {
+                OnboardingView()
+            }
         }
     }
 
@@ -146,7 +169,7 @@ struct ContentView: View {
                         .foregroundColor(slipped ? .orange : Color(.systemGray3))
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(slipped ? "Undo slip" : "Mark slip")
+                .accessibilityLabel((slipped ? "Undo slip " : "Mark slip ") + habit.name)
             } else {
                 Button {
                     let generator = UIImpactFeedbackGenerator(style: .medium)
@@ -162,6 +185,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(checkedToday.contains(habit.id))
+                .accessibilityLabel((checkedToday.contains(habit.id) ? "Checked in " : "Check in ") + habit.name)
             }
         }
     }
@@ -199,6 +223,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(.plain)
                 .disabled(checkedToday.contains(habit.id))
+                .accessibilityLabel((checkedToday.contains(habit.id) ? "Checked in " : "Check in ") + habit.name)
             }
         }
     }
@@ -443,6 +468,7 @@ struct AddHabitView: View {
                                 .background(icon == name ? Color(hex: colorHex).opacity(0.25) : Color.clear)
                                 .cornerRadius(8)
                                 .onTapGesture { icon = name }
+                                .accessibilityIdentifier("icon_\(name)")
                         }
                     }
                 }
@@ -454,6 +480,7 @@ struct AddHabitView: View {
                                 .frame(width: 28, height: 28)
                                 .overlay(Circle().stroke(Color.primary, lineWidth: colorHex == hex ? 2 : 0))
                                 .onTapGesture { colorHex = hex }
+                                .accessibilityIdentifier("color_\(hex)")
                         }
                     }
                 }

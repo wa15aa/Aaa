@@ -1,0 +1,20 @@
+appId: sh.steadyhabit.Steady
+---
+# Quit 是 Pro 功能：免费选 Quit → 功能点 paywall（只测弹出+Restore 存在，不买）
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- tapOn: "Habit name"
+- inputText: "No sugar"
+- scrollUntilVisible:
+    element: "Habit type"
+    direction: DOWN
+- tapOn: "Habit type"
+- tapOn: "Quit — slip days don't break you"
+- extendedWaitUntil:
+    visible: ".*One purchase. Yours forever..*"
+    timeout: 8000
+- assertVisible: "Restore purchase"
+- tapOn: "Not now"
+- assertVisible: "New Habit"

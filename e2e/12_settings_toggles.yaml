@@ -1,0 +1,30 @@
+appId: sh.steadyhabit.Steady
+---
+# 设置页：开关/选择器全要素在；关 Overview → 首页头部消失 → 恢复
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- extendedWaitUntil:
+    visible: ".*done today.*"
+    timeout: 10000
+- tapOn: "Settings"
+- assertVisible: "Week starts on"
+- assertVisible: "App icon badge"
+- assertVisible: "Day ends at"
+- assertVisible: "Show overview header"
+- assertVisible: "Show streak counts"
+- assertVisible: "Show week dots"
+# picker 页往返挪到 toggle 之后，避开 pop 动画期点击丢失
+- tapOn: "Day ends at"
+- assertVisible: "2 AM"
+- tapOn: "Midnight"
+# SwiftUI Form 里 toggle 的 label 文本不响应 XCUI 点击，开关本体是独立元素 → 点坐标
+- tapOn:
+    point: "83.5%,49%"
+- tapOn: "Done"
+- assertNotVisible: ".*done today.*"
+- tapOn: "Settings"
+- tapOn:
+    point: "83.5%,49%"
+- tapOn: "Done"
+- assertVisible: ".*done today.*"

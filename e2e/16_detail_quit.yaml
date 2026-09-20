@@ -1,0 +1,21 @@
+appId: sh.steadyhabit.Steady
+---
+# Pro 详情页（quit）：QUIT 徽标 + 标破戒 + Undo
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-screenshotMode": "none"}
+- tapOn: "Add habit"
+- tapOn: "Habit name"
+- inputText: "No sugar"
+- scrollUntilVisible:
+    element: "Habit type"
+    direction: DOWN
+- tapOn: "Habit type"
+- tapOn: "Quit — slip days don't break you"
+- tapOn: "Save"
+- tapOn: "No sugar"
+- assertVisible: "QUIT"
+- tapOn: "I slipped today"
+- assertVisible: "Slip marked — one slip doesn't break you"
+- tapOn: "Undo"
+- assertVisible: "I slipped today"

@@ -1,0 +1,16 @@
+appId: sh.steadyhabit.Steady
+---
+# 3 视图切换：List → Week（列头字母）→ Compact（仅 icon+名+Nd）→ List
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- assertVisible: "Meditate 10 min"
+- tapOn: "Week"
+- assertVisible: "M"
+- assertVisible: "S"
+- tapOn: "Compact"
+- assertVisible: "Meditate 10 min"
+- assertVisible: "12d"
+- assertNotVisible: "12-day streak"
+- tapOn: "List"
+- assertVisible: "12-day streak"

@@ -1,0 +1,22 @@
+appId: sh.steadyhabit.Steady
+---
+# 设置页重看 onboarding（修复：不再用 -steady.onboarded 参数域注入——它会压住 Settings 里的 removeObject，导致 Replay 永不弹出）
+# 改为真实路径：首启动自然弹 onboarding → Get started → 设置页 Replay → 再弹
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-screenshotMode": "none"}
+- extendedWaitUntil:
+    visible: "A habit tracker that forgives you."
+    timeout: 15000
+- tapOn: "Get started"
+- assertVisible: "No habits yet"
+- tapOn: "Settings"
+- scrollUntilVisible:
+    element: "Replay onboarding"
+    direction: DOWN
+- tapOn: "Replay onboarding"
+- extendedWaitUntil:
+    visible: "A habit tracker that forgives you."
+    timeout: 15000
+- tapOn: "Get started"
+- assertVisible: "No habits yet"

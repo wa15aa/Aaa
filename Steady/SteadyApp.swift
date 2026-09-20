@@ -10,12 +10,22 @@ struct SteadyApp: App {
         // 每日首次启动：iCloud 加密增量备份（MVP_SPEC §3.5）
         // 注意：不在启动时请求通知权限（DoD#5），权限在用户自设第一条提醒时才弹
         let container = persistence.container
-        DispatchQueue.global(qos: .utility).async {
-            BackupService.performDailyBackup(context: container.newBackgroundContext())
+        // 修复 2026-09-19 真 crash：newBackgroundContext 是 privateQueue 并发模型，
+        // 直接在 GCD 线程访问违反 CoreData 线程约束 → _PFObjectIDFastHash64 空指针 SIGSEGV。
+        // 必须包 context.perform（E2E 17_relaunch_with_data 防回归）
+        let bg = container.newBackgroundContext()
+        bg.perform {
+            BackupService.performDailyBackup(context: bg)
         }
         #if DEBUG
+        // E2E 钩子：-noSeed 跳过演示数据（Maestro 确定性）；-e2ePro 直接置 Pro（测 quit/详情页）
+        if ProcessInfo.processInfo.arguments.contains("-e2ePro") {
+            UserDefaults.standard.set(true, forKey: "steady.isPro")
+        }
         // DEBUG 下空库自动注入演示数据（截图/联调用）；Release 永不包含
-        Self.seedDemoData(context: persistence.container.viewContext)
+        if !ProcessInfo.processInfo.arguments.contains("-noSeed") {
+            Self.seedDemoData(context: persistence.container.viewContext)
+        }
         #endif
     }
 
@@ -53,15 +63,7 @@ struct SteadyApp: App {
         WindowGroup {
             ContentView()
                 .environment(\.managedObjectContext, persistence.container.viewContext)
-                // W7 一页式 onboarding：首启动一次；截图管线跳过（screenshotMode 优先）
-                .fullScreenCover(isPresented: .init(
-                    get: {
-                        !UserDefaults.standard.bool(forKey: "steady.onboarded")
-                            && UserDefaults.standard.string(forKey: "screenshotMode") == nil
-                    },
-                    set: { _ in })) {
-                        OnboardingView()
-                    }
+                // onboarding 移进 ContentView（@AppStorage 驱动，见 ContentView.swift）
         }
     }
 }

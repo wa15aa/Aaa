@@ -1,0 +1,14 @@
+appId: sh.steadyhabit.Steady
+---
+# 打卡：streak 变 1，头部计数更新，按钮态翻转
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- tapOn: "Habit name"
+- inputText: "Run"
+- tapOn: "Save"
+- tapOn: "Check in Run"
+- assertVisible: "1-day streak"
+- assertVisible: "1 of 1 done today"
+- assertVisible: "Checked in Run"

@@ -1,0 +1,17 @@
+appId: sh.steadyhabit.Steady
+---
+# Pro 详情页（build）：统计四件套 + 打卡按钮态
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-screenshotMode": "none"}
+- tapOn: "Add habit"
+- tapOn: "Habit name"
+- inputText: "Run"
+- tapOn: "Save"
+- tapOn: "Run"
+- assertVisible: "Details"
+- assertVisible: "Current"
+- assertVisible: "Best"
+- assertVisible: "Rate"
+- tapOn: "Check in for today"
+- assertVisible: "Done for today"

@@ -1,0 +1,22 @@
+appId: sh.steadyhabit.Steady
+---
+# Quit 全流程（Pro）：创建 → 行内引导文案 → 标破戒 → 撤销
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-screenshotMode": "none"}
+- tapOn: "Add habit"
+- tapOn: "Habit name"
+- inputText: "No sugar"
+- scrollUntilVisible:
+    element: "Habit type"
+    direction: DOWN
+- tapOn: "Habit type"
+- tapOn: "Quit — slip days don't break you"
+- assertVisible: "Only mark days you slipped. One slip never breaks your streak."
+- tapOn: "Save"
+- assertVisible: "No sugar"
+- assertVisible: ".*clean streak.*"
+- tapOn: "Mark slip No sugar"
+- assertVisible: "Undo slip No sugar"
+- tapOn: "Undo slip No sugar"
+- assertVisible: "Mark slip No sugar"

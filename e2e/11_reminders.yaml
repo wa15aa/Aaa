@@ -1,0 +1,22 @@
+appId: sh.steadyhabit.Steady
+---
+# 多提醒：加 2 条提醒 → 保存后习惯在列表（通知权限弹窗若出现则允许）
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- tapOn: "Habit name"
+- inputText: "Read"
+- pressKey: enter
+- scrollUntilVisible:
+    element: "Add reminder"
+    direction: DOWN
+- tapOn: "Add reminder"
+- assertVisible: "Reminder 1"
+- scrollUntilVisible:
+    element: "Add reminder"
+    direction: DOWN
+- tapOn: "Add reminder"
+- assertVisible: "Reminder 2"
+- tapOn: "Save"
+- assertVisible: "Read"

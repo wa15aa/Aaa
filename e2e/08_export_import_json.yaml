@@ -1,0 +1,30 @@
+appId: sh.steadyhabit.Steady
+---
+# JSON 导出/导入入口（沙盒只验 picker 弹出后取消）
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Settings"
+- assertVisible: "Export JSON"
+- tapOn: "Export JSON"
+# 导出=fileExporter 文档选择器：文件名 steady-backup 可见即证明导出管线通
+- extendedWaitUntil:
+    visible: "steady-backup"
+    timeout: 15000
+# iOS16 保存面板钻取进 On My iPhone 后没有 Cancel，要先 Back 回根级
+- tapOn: "Back"
+- extendedWaitUntil:
+    visible: "Cancel"
+    timeout: 10000
+- tapOn: "Cancel"
+- scrollUntilVisible:
+    element: "Import JSON"
+    direction: DOWN
+- tapOn: "Import JSON"
+# 导入=fileImporter 文档选择器：弹出即有 Cancel
+- extendedWaitUntil:
+    visible: "Cancel"
+    timeout: 15000
+- tapOn: "Cancel"
+- tapOn: "Done"
+- assertVisible: "Today"

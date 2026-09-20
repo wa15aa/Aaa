@@ -1,0 +1,21 @@
+appId: sh.steadyhabit.Steady
+---
+# 数量墙：第 4 个习惯 Save → paywall（文案红线：无数量限制表述）
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+# 种子已有 3 个习惯，直接建第 4 个
+- assertVisible: "Meditate 10 min"
+- tapOn: "Add habit"
+- tapOn: "Habit name"
+- inputText: "Stretch"
+- tapOn: "Save"
+- extendedWaitUntil:
+    visible: ".*One purchase. Yours forever..*"
+    timeout: 8000
+- assertVisible: "Restore purchase"
+- assertNotVisible: "habit limit"
+- tapOn: "Not now"
+- assertVisible: "New Habit"
+- tapOn: "Cancel"
+- assertVisible: "Today"

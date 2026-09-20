@@ -1,0 +1,12 @@
+appId: sh.steadyhabit.Steady
+---
+# 首启动 onboarding → Get started → 空态
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-screenshotMode": "none"}
+- assertVisible: "A habit tracker that forgives you."
+- tapOn: "Get started"
+- extendedWaitUntil:
+    visible: "No habits yet"
+    timeout: 15000
+- assertVisible: "Create your first habit"

@@ -1,0 +1,20 @@
+appId: sh.steadyhabit.Steady
+---
+# 新建 Build 习惯：名字+图标+色板 → 保存 → 出现在列表
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- assertVisible: "New Habit"
+- tapOn: "Habit name"
+- inputText: "Meditate"
+- assertVisible: "Icon"
+- tapOn:
+    id: "icon_brain.head.profile"
+- assertVisible: "Color"
+- tapOn:
+    id: "color_4F8CFF"
+- tapOn: "Save"
+- assertVisible: "Meditate"
+- assertVisible: "0-day streak"
+- assertVisible: "0 of 1 done today"

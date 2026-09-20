@@ -1,0 +1,11 @@
+appId: sh.steadyhabit.Steady
+---
+# 断签不死实证：Meditate 种子含断签日（5 天前未打卡），streak 不归零仍 12 天
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- assertVisible: "Meditate 10 min"
+- assertVisible: "12-day streak"
+- assertVisible: "This week 3/3 · 2-week streak"
+- assertVisible: "20-day streak"
+- assertVisible: "2 of 3 done today"

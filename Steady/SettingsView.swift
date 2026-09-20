@@ -107,7 +107,11 @@ struct SettingsView: View {
                     Link(destination: URL(string: "mailto:wtt_mac@163.com?subject=Steady%20feedback")!) {
                         Label("Send feedback", systemImage: "envelope")
                     }
-                    Button { UserDefaults.standard.removeObject(forKey: "steady.onboarded") } label: {
+                    Button {
+                        // 先关设置页再放 onboarding：sheet 在场时 root 无法弹 fullScreenCover
+                        UserDefaults.standard.removeObject(forKey: "steady.onboarded")
+                        dismiss()
+                    } label: {
                         Label("Replay onboarding", systemImage: "arrow.counterclockwise")
                     }
                 }

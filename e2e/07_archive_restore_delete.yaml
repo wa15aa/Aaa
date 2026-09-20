@@ -1,0 +1,40 @@
+appId: sh.steadyhabit.Steady
+---
+# 归档→设置页恢复→再归档→彻底删除（含确认 alert）
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- tapOn: "Habit name"
+- inputText: "Run"
+- tapOn: "Save"
+- swipe:
+    from: "Run"
+    direction: LEFT
+- tapOn: "Delete"
+- assertNotVisible: "Run"
+- tapOn: "Settings"
+- assertVisible: "Run"
+- tapOn: "Restore"
+# Restore 点击释放瞬间行被移除，Delete 移位到触点下可能误触确认框 → 兜底 Cancel
+- tapOn:
+    text: "Cancel"
+    optional: true
+- extendedWaitUntil:
+    visible: "No archived habits"
+    timeout: 10000
+- tapOn: "Done"
+- assertVisible: "Run"
+- swipe:
+    from: "Run"
+    direction: LEFT
+- tapOn: "Delete"
+- tapOn: "Settings"
+- tapOn: "Delete"
+- assertVisible: "Delete permanently?"
+- tapOn:
+    text: "Delete"
+    index: 0
+- assertVisible: "No archived habits"
+- tapOn: "Done"
+- assertVisible: "No habits yet"

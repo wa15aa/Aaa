@@ -1,0 +1,17 @@
+appId: sh.steadyhabit.Steady
+---
+# 旧数据启动回归（2026-09-19 SIGSEGV 红线 bug）：带数据二次启动不闪退
+# 第一次启动建数据 → killApp → 不带 clearState 再启动 → 数据在、备份线程不炸
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- tapOn: "Create your first habit"
+- tapOn: "Habit name"
+- inputText: "Read"
+- tapOn: "Save"
+- assertVisible: "Read"
+- stopApp
+- launchApp:
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- assertVisible: "Today"
+- assertVisible: "Read"

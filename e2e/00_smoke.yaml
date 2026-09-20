@@ -1,0 +1,8 @@
+appId: sh.steadyhabit.Steady
+---
+# 最小流程：启动 → 跳过 onboarding → 空态
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-screenshotMode": "none"}
+- assertVisible: "Today"
+- assertVisible: "No habits yet"
