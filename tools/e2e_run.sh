@@ -18,8 +18,11 @@ ls "$REPORTS_DIR"/Steady-*.ips 2>/dev/null | sort > /tmp/e2e_ips_before.txt
 crashed_flows=""; failed_flows=""
 for f in e2e/*.yaml; do
     name=$(basename "$f" .yaml)
+    t0=$(python3 -c 'import time;print(time.time())')
     out=$(maestro test "$f" 2>&1)
     rc=$?
+    t1=$(python3 -c 'import time;print(time.time())')
+    dur=$(python3 -c "print(f'{$t1-$t0:.1f}')")
     # 哨兵②：流程后进程存活检查
     sleep 1
     if ! xcrun simctl spawn booted launchctl list 2>/dev/null | grep -q "$BUNDLE"; then
@@ -30,13 +33,13 @@ for f in e2e/*.yaml; do
     if echo "$out" | grep -q "Assertion is false\|Element not found\|FAILED"; then
         if [ "$alive" = "0" ]; then
             crashed_flows="$crashed_flows $name"
-            echo "CRASHED $name" >> "$REPORT"
+            echo "CRASHED $name (${dur}s)" >> "$REPORT"
         else
             failed_flows="$failed_flows $name"
-            echo "FAILED  $name :: $(echo "$out" | grep -oE '(Assertion is false|Element not found).*' | head -1)" >> "$REPORT"
+            echo "FAILED  $name (${dur}s) :: $(echo "$out" | grep -oE '(Assertion is false|Element not found).*' | head -1)" >> "$REPORT"
         fi
     else
-        echo "PASS    $name" >> "$REPORT"
+        echo "PASS    $name (${dur}s)" >> "$REPORT"
     fi
 done
 

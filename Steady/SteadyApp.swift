@@ -26,6 +26,18 @@ struct SteadyApp: App {
         if !ProcessInfo.processInfo.arguments.contains("-noSeed") {
             Self.seedDemoData(context: persistence.container.viewContext)
         }
+        // E2E 钩子：-e2eSeedQuit 注入带历史的 quit 习惯（4 天前创建、2 天前破戒一次），
+        // 用于 19_quit_slip_streak_survives 验证"破戒 1 天 streak 不清零"核心叙事
+        if ProcessInfo.processInfo.arguments.contains("-e2eSeedQuit") {
+            let repo = HabitRepository(context: persistence.container.viewContext)
+            if !repo.activeHabits().contains(where: { $0.name == "No sugar" }) {
+                let today = DayKey(HabitRepository.todayKey())
+                let q = repo.createHabit(name: "No sugar", icon: "bandage.fill",
+                                         colorHex: "FF9F0A", frequency: .daily, type: .quit)
+                q.createdDay = StreakEngine.addDays(today, -4).raw
+                _ = repo.checkin(habitId: q.id, day: StreakEngine.addDays(today, -2).raw)
+            }
+        }
         #endif
     }
 

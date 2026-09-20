@@ -18,5 +18,12 @@ appId: sh.steadyhabit.Steady
 - assertVisible: ".*clean streak.*"
 - tapOn: "Mark slip No sugar"
 - assertVisible: "Undo slip No sugar"
+# 新建当天破戒=streak 归零但显示宽恕文案（带历史的不归零场景见 19）
+- assertVisible: "Clean today counts — only mark slips"
+# slip 状态重启持久化（stopApp 不带 clearState）
+- stopApp
+- launchApp:
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-screenshotMode": "none"}
+- assertVisible: "Undo slip No sugar"
 - tapOn: "Undo slip No sugar"
 - assertVisible: "Mark slip No sugar"

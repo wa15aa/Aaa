@@ -1,0 +1,21 @@
+appId: sh.steadyhabit.Steady
+---
+# 核心叙事红线：带历史的 quit 习惯破戒 1 天，clean streak 不清零（4→3，不归零）
+# 依赖 -e2eSeedQuit 钩子（SteadyApp DEBUG）：4 天前创建、2 天前破戒一次 → 当前 4-day clean streak
+- launchApp:
+    clearState: true
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-e2eSeedQuit": "1", "-screenshotMode": "none"}
+- assertVisible: "No sugar"
+- assertVisible: "4-day clean streak"
+- tapOn: "Mark slip No sugar"
+# 破戒今天 → 3-day clean streak，绝不出零/归零文案
+- assertVisible: "3-day clean streak"
+- assertNotVisible: "Clean today counts — only mark slips"
+# 重启后 slip 与 streak 保持
+- stopApp
+- launchApp:
+    arguments: {"-noSeed": "1", "-steady.onboarded": "YES", "-e2ePro": "1", "-e2eSeedQuit": "1", "-screenshotMode": "none"}
+- assertVisible: "Undo slip No sugar"
+- assertVisible: "3-day clean streak"
+- tapOn: "Undo slip No sugar"
+- assertVisible: "4-day clean streak"
