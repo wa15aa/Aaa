@@ -1,0 +1,18 @@
+appId: sh.steadyhabit.Steady
+---
+# 周视图矩阵打卡闭环：Week 视图点今天格 → List 视图状态同步 → 再点撤销
+# 依赖 weekCell a11y 标签（"Meditate 10 min today" 锚点，2026-09-19 补）
+- launchApp:
+    clearState: true
+    arguments: {"-steady.onboarded": "YES", "-screenshotMode": "none"}
+- assertVisible: "Meditate 10 min"
+- tapOn: "Week"
+- tapOn: "Meditate 10 min today"
+- tapOn: "List"
+- assertVisible: "Checked in Meditate 10 min"
+- assertVisible: ".*3 of 3 done today.*"
+- tapOn: "Week"
+- tapOn: "Meditate 10 min today"
+- tapOn: "List"
+- assertVisible: "Check in Meditate 10 min"
+- assertVisible: ".*2 of 3 done today.*"

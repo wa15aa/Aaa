@@ -292,6 +292,9 @@ struct ContentView: View {
         }
         .buttonStyle(.plain)
         .disabled(future)
+        // a11y+E2E：格子原本无任何标签（VoiceOver 也无法区分）；今天格带 today 锚点
+        .accessibilityLabel("\(habit.name) \(day == today ? "today" : day.raw)")
+        .accessibilityValue(marked ? "checked" : "unchecked")
     }
 
     /// 底部胶囊切换器（W7 视图批①，参考 HabitKit 02 页）
