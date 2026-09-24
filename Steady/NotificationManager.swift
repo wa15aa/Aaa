@@ -46,4 +46,13 @@ enum NotificationManager {
         UNUserNotificationCenter.current()
             .removePendingNotificationRequests(withIdentifiers: ids(habitId))
     }
+
+    /// 备份恢复后全量重排：恢复只动数据层，已挂通知不随 JSON 走。
+    /// 先清空全部 pending（覆盖已删除习惯残留），再按当前库重挂。
+    static func rescheduleAll(habits: [HabitEntity], times: (HabitEntity) -> [(hour: Int, minute: Int)]) {
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        for habit in habits where !times(habit).isEmpty {
+            scheduleReminders(habitId: habit.id, name: habit.name, times: times(habit))
+        }
+    }
 }

@@ -140,6 +140,7 @@ struct SettingsView: View {
                 defer { if ok { url.stopAccessingSecurityScopedResource() } }
                 if let data = try? Data(contentsOf: url),
                    let (h, c) = try? BackupService.restore(context: context, from: data) {
+                    NotificationManager.rescheduleAll(habits: repo.activeHabits()) { repo.reminders(of: $0) }
                     toast = "Imported \(h) habits, \(c) check-ins"
                 } else {
                     toast = "Import failed — not a valid Steady backup"
