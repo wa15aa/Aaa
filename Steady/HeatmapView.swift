@@ -127,6 +127,19 @@ struct HabitDetailView: View {
         return done * 100 / totalDays
     }
 
+    /// 双数字之 Total：build=累计打卡天数；quit=累计无破戒天数（与 Rate 分子同口径）
+    private var totalCheckins: Int {
+        let created = DayKey(habit.createdDay)
+        let todayKey = DayKey(today)
+        if isQuit {
+            var n = 0, d = created
+            while d <= todayKey { d = StreakEngine.addDays(d, 1); n += 1 }
+            let slips = checkinSet.filter { $0 >= created && $0 <= todayKey }.count
+            return max(0, n - slips)
+        }
+        return checkinSet.filter { $0 >= created && $0 <= todayKey }.count
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 12) {
@@ -147,9 +160,10 @@ struct HabitDetailView: View {
                 }
             }
             todayAction
-            HStack(spacing: 24) {
+            HStack(spacing: 16) {
                 stat("Current", "\(state.current)")
                 stat("Best", "\(state.best)")
+                stat("Total", "\(totalCheckins)") // 双数字（sage 宽恕机制候选 C 的低成本增强）：封存段成就感兜底
                 stat("Journeys", "\(state.segments.count)")
                 stat("Rate", "\(completionRate)%")
             }
