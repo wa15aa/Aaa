@@ -26,13 +26,13 @@ for f in e2e/*.yaml; do
     # 冷启动度量：18_cold_start 跑完立即读 App 内打点（后续流程会覆盖该值）
     if [ "$name" = "18_cold_start" ]; then
         # simctl defaults read 域解析不可靠 → 直读 App 容器 plist
-        appdata=$(xcrun simctl get_app_container booted "$BUNDLE" data 2>/dev/null)
-        # cfprefsd 缓存：跑完立刻读可能没刷盘，最多等 10s 重试 5 次
+        # cfprefsd 缓存：跑完立刻读可能没刷盘，最多等 24s 重试 8 次（09-23 观测到 10s 窗口偶发不够）
         cold_ms=""
-        for i in 1 2 3 4 5; do
-            cold_ms=$(plutil -p "$appdata/Library/Preferences/$BUNDLE.plist" 2>/dev/null | grep lastColdStartMs | grep -oE '[0-9]+' | tail -1 || true)
+        for i in 1 2 3 4 5 6 7 8; do
+            appdata=$(xcrun simctl get_app_container booted "$BUNDLE" data 2>/dev/null)
+            [ -n "$appdata" ] && cold_ms=$(plutil -p "$appdata/Library/Preferences/$BUNDLE.plist" 2>/dev/null | grep lastColdStartMs | grep -oE '[0-9]+' | tail -1 || true)
             [ -n "$cold_ms" ] && break
-            sleep 2
+            sleep 3
         done
         cold_ms=${cold_ms:-?}
         echo "COLDSTART_MS $cold_ms" >> "$REPORT"
